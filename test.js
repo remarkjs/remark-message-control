@@ -116,6 +116,33 @@ test('control()', function (t) {
             'should support `reset`'
         );
     });
+    remark().use(function (processor) {
+        var transformer = control(processor, {
+            'name': 'foo',
+            'reset': true
+        });
+
+        return function (ast, file) {
+            var message = file.warn('Error', ast.children[1]);
+
+            message.ruleId = 'bar';
+            message.source = 'foo';
+
+            transformer(ast, file);
+        };
+    }).process([
+        '<!--foo enable bar-->',
+        '',
+        'This is a paragraph.'
+    ].join('\n'), function (err, file) {
+        t.ifError(err, 'should not fail');
+
+        t.deepEqual(
+            file.messages.map(String),
+            ['3:1-3:21: Error'],
+            'should enable with a marker, when `reset`'
+        );
+    });
 
     remark().use(function (processor) {
         var transformer = control(processor, {
@@ -541,6 +568,59 @@ test('control()', function (t) {
             file.messages.map(String),
             [],
             'should ignore by `source`, when given as an array'
+        );
+    });
+
+    remark().use(function (processor) {
+        var transformer = control(processor, {
+            'name': 'foo',
+            'disable': ['bar']
+        });
+
+        return function (ast, file) {
+            var message = file.warn('Error', ast.children[0]);
+
+            message.ruleId = 'bar';
+            message.source = 'foo';
+
+            transformer(ast, file);
+        };
+    }).process([
+        'This is a paragraph.'
+    ].join('\n'), function (err, file) {
+        t.ifError(err, 'should not fail');
+
+        t.deepEqual(
+            file.messages.map(String),
+            [],
+            'should support initial `disable`s'
+        );
+    });
+
+    remark().use(function (processor) {
+        var transformer = control(processor, {
+            'name': 'foo',
+            'reset': true,
+            'enable': ['bar']
+        });
+
+        return function (ast, file) {
+            var message = file.warn('Error', ast.children[0]);
+
+            message.ruleId = 'bar';
+            message.source = 'foo';
+
+            transformer(ast, file);
+        };
+    }).process([
+        'This is a paragraph.'
+    ].join('\n'), function (err, file) {
+        t.ifError(err, 'should not fail');
+
+        t.deepEqual(
+            file.messages.map(String),
+            ['1:1-1:21: Error'],
+            'should support initial `enable`s'
         );
     });
 

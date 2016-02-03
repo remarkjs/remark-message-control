@@ -166,24 +166,6 @@ function attacher(processor, options) {
         }
 
         /**
-         * Get the initial state of a rule.
-         * When without `ruleId`, gets global initial state.
-         *
-         * @param {string?} [ruleId] - Unique rule name.
-         */
-        function getInitialState(ruleId) {
-            if (!ruleId) {
-                return initial;
-            }
-
-            if (reset) {
-                return enable.indexOf(ruleId) !== -1;
-            }
-
-            return disable.indexOf(ruleId) === -1;
-        }
-
-        /**
          * Get the latest state of a rule.
          * When without `ruleId`, gets global state.
          *
@@ -196,7 +178,15 @@ function attacher(processor, options) {
                 return ranges[ranges.length - 1].state;
             }
 
-            return getInitialState(ruleId);
+            if (!ruleId) {
+                return !reset;
+            }
+
+            if (reset) {
+                return enable.indexOf(ruleId) !== -1;
+            }
+
+            return disable.indexOf(ruleId) === -1;
         }
 
         /**
@@ -339,7 +329,15 @@ function attacher(processor, options) {
              * message, so we check the initial state.
              */
 
-            return getInitialState(id);
+            if (!id) {
+                return initial || reset;
+            }
+
+            if (reset) {
+                return enable.indexOf(id) !== -1;
+            }
+
+            return disable.indexOf(id) === -1;
         }
 
         file.messages = file.messages.filter(function (message) {
@@ -361,8 +359,12 @@ function attacher(processor, options) {
              * *not* when they’re not in the document.
              */
 
-            if (!message.line || !message.column) {
-                return true;
+            if (!message.line) {
+                message.line = 1;
+            }
+
+            if (!message.column) {
+                message.column = 1;
             }
 
             /*
