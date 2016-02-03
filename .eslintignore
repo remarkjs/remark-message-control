@@ -1,0 +1,5 @@
+components/
+coverage/
+example.js
+remark-message-control.js
+remark-message-control.min.js

@@ -1,0 +1,22 @@
+{
+  "name": "remark-message-control",
+  "version": "0.0.0",
+  "description": "Enable, disable, and ignore messages with remark",
+  "license": "MIT",
+  "keywords": [
+    "remark",
+    "comment",
+    "message",
+    "marker",
+    "control"
+  ],
+  "repository": "wooorm/remark-message-control",
+  "dependencies": {
+    "wooorm/mdast-comment-marker": "^1.0.0",
+    "wooorm/remark-range": "^2.0.0",
+    "wooorm/unist-util-visit": "^1.0.0"
+  },
+  "scripts": [
+    "index.js"
+  ]
+}
