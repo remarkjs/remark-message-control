@@ -14,7 +14,7 @@
  * Dependencies.
  */
 
-var range = require('remark-range');
+var vfileLocation = require('vfile-location');
 var visit = require('unist-util-visit');
 var marker = require('mdast-comment-marker');
 
@@ -123,8 +123,6 @@ function attacher(processor, options) {
         );
     }
 
-    processor.use(range);
-
     known = options.known;
     reset = options.reset;
     enable = options.enable || [];
@@ -138,6 +136,7 @@ function attacher(processor, options) {
     }
 
     return function (ast, file) {
+        var location = vfileLocation(file);
         var initial = !reset;
         var gaps = detectGaps(ast);
         var scope = {};
@@ -371,7 +370,7 @@ function attacher(processor, options) {
              * Check whether the warning is inside a gap.
              */
 
-            pos = file.positionToOffset(message);
+            pos = location.toOffset(message);
 
             while (gapIndex--) {
                 if (

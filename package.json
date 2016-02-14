@@ -21,8 +21,8 @@
   "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
   "dependencies": {
     "mdast-comment-marker": "^1.0.0",
-    "remark-range": "^2.0.0",
-    "unist-util-visit": "^1.0.0"
+    "unist-util-visit": "^1.0.0",
+    "vfile-location": "^2.0.0"
   },
   "devDependencies": {
     "browserify": "^13.0.0",
@@ -31,14 +31,14 @@
     "istanbul": "^0.4.0",
     "jscs": "^2.0.0",
     "jscs-jsdoc": "^1.0.0",
-    "remark": "^3.0.0",
-    "remark-comment-config": "^2.0.2",
-    "remark-github": "^4.0.0",
-    "remark-lint": "^2.0.2",
+    "remark": "^4.0.0-alpha.4",
+    "remark-comment-config": "^3.0.0",
+    "remark-github": "^4.0.1",
+    "remark-lint": "^3.0.0",
     "remark-slug": "^4.0.0",
-    "remark-toc": "^2.0.1",
+    "remark-toc": "^3.0.0",
     "remark-validate-links": "^2.0.2",
-    "remark-yaml-config": "^2.0.0",
+    "remark-yaml-config": "^3.0.0",
     "tape": "^4.0.0",
     "vfile-reporter": "^1.5.0"
   },
