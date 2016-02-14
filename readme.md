@@ -10,8 +10,8 @@ Enable, disable, and ignore messages with [remark][].
 npm install remark-message-control
 ```
 
-**remark-message-control** is also available for [duo][duo-install], and as an
-AMD, CommonJS, and globals module, [uncompressed and compressed][releases].
+**remark-message-control** is also available as an AMD, CommonJS, and
+globals module, [uncompressed and compressed][releases].
 
 ## Usage
 
@@ -138,8 +138,6 @@ For example, to turn off certain messages for the next node:
 [codecov]: https://codecov.io/github/wooorm/remark-message-control
 
 [npm-install]: https://docs.npmjs.com/cli/install
-
-[duo-install]: http://duojs.org/#getting-started
 
 [releases]: https://github.com/wooorm/remark-message-control/releases
 
