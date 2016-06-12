@@ -2,6 +2,11 @@
 
 <!--lint disable no-multiple-toplevel-headings -->
 
+2.0.1 / 2016-06-12
+==================
+
+*   Fix final gap detection ([`3148a82`](https://github.com/wooorm/remark-message-control/commit/3148a82))
+
 2.0.0 / 2016-02-14
 ==================
 
