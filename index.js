@@ -14,6 +14,7 @@
  * Dependencies.
  */
 
+var trim = require('trim');
 var vfileLocation = require('vfile-location');
 var visit = require('unist-util-visit');
 var marker = require('mdast-comment-marker');
@@ -32,9 +33,10 @@ var ALLOWED_VERBS = {
  * Detect gaps in `ast`.
  *
  * @param {Node} ast - Syntax tree.
+ * @param {VFile} file - Virtual file.
  * @return {Array.<Object>} - Gaps.
  */
-function detectGaps(ast) {
+function detectGaps(ast, file) {
     var lastNode = ast.children[ast.children.length - 1];
     var offset = 0;
     var isGap = false;
@@ -84,19 +86,26 @@ function detectGaps(ast) {
 
     /*
      * Get the end of the document.
+     * This detects if the last node was the last node.
+     * If not, there’s an extra gap between the last node
+     * and the end of the document.
      */
 
     if (
         lastNode &&
         lastNode.position &&
         lastNode.position.end &&
-        offset === lastNode.position.end.offset
+        offset === lastNode.position.end.offset &&
+        trim(file.toString().slice(offset)) !== ''
     ) {
         update();
-        update(ast &&
+
+        update(
+            ast &&
             ast.position &&
             ast.position.end &&
-            ast.position.end.offset - 1);
+            ast.position.end.offset - 1
+        );
     }
 
     return gaps;
@@ -138,7 +147,7 @@ function attacher(processor, options) {
     return function (ast, file) {
         var location = vfileLocation(file);
         var initial = !reset;
-        var gaps = detectGaps(ast);
+        var gaps = detectGaps(ast, file);
         var scope = {};
         var globals = [];
 

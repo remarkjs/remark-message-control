@@ -317,13 +317,9 @@ test('control()', function (t) {
     });
 
     remark().use(function (processor) {
-        var transformer = control(processor, {
+        return control(processor, {
             'name': 'foo'
         });
-
-        return function (ast, file) {
-            transformer(ast, file);
-        };
     }).process([
         '<!--foo test-->'
     ].join('\n'), function (err, file) {
@@ -391,6 +387,46 @@ test('control()', function (t) {
         processor.use(toc);
 
         return function (ast, file) {
+            var message = file.warn('Error', {
+                'line': 5,
+                'column': 1
+            });
+
+            message.ruleId = 'bar';
+            message.source = 'foo';
+
+            message = file.warn('Error', {
+                'line': 5,
+                'column': 1
+            });
+
+            message.ruleId = 'bar';
+            message.source = 'foo';
+
+            transformer(ast, file);
+        };
+    }).process([
+        '# README',
+        '',
+        '## Table of Contents',
+        '',
+        '*  [This is removed](#this-is-removed)'
+    ].join('\n'), function (err, file) {
+        t.ifError(err, 'should not fail');
+
+        t.deepEqual(
+            file.messages.map(String),
+            [],
+            'should ignore final gaps'
+        );
+    });
+
+    remark().use(function (processor) {
+        var transformer = control(processor, {
+            'name': 'foo'
+        });
+
+        return function (ast, file) {
             var message = file.warn('Error');
 
             message.ruleId = 'bar';
@@ -405,6 +441,59 @@ test('control()', function (t) {
             file.messages.map(String),
             ['1:1: Error'],
             'should support empty documents'
+        );
+    });
+
+    remark().use(function (processor) {
+        var transformer = control(processor, {
+            'name': 'foo'
+        });
+
+        return function (ast, file) {
+            var message = file.warn('Error', ast.position.end);
+
+            message.ruleId = 'bar';
+            message.source = 'foo';
+
+            transformer(ast, file);
+        };
+    }).process([
+        '# README',
+        ''
+    ].join('\n'), function (err, file) {
+        t.ifError(err, 'should not fail');
+
+        t.deepEqual(
+            file.messages.map(String),
+            ['2:1: Error'],
+            'should message at the end of the document'
+        );
+    });
+
+    remark().use(function (processor) {
+        var transformer = control(processor, {
+            'name': 'foo'
+        });
+
+        return function (ast, file) {
+            var message = file.warn('Error', ast.children[1].position.end);
+
+            message.ruleId = 'bar';
+            message.source = 'foo';
+
+            transformer(ast, file);
+        };
+    }).process([
+        '# README',
+        '',
+        '*   List'
+    ].join('\n'), function (err, file) {
+        t.ifError(err, 'should not fail');
+
+        t.deepEqual(
+            file.messages.map(String),
+            ['3:9: Error'],
+            'should message at the end of the document'
         );
     });
 
