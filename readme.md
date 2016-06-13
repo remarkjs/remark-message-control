@@ -1,13 +1,13 @@
-# remark-message-control [![Build Status][travis-badge]][travis] [![Coverage Status][codecov-badge]][codecov]
+# remark-message-control [![Build Status][build-badge]][build-status] [![Coverage Status][coverage-badge]][coverage-status] [![Chat][chat-badge]][chat]
 
-Enable, disable, and ignore messages with [remark][].
+Enable, disable, and ignore messages with [**remark**][remark].
 
 ## Installation
 
-[npm][npm-install]:
+[npm][]:
 
 ```bash
-npm install remark-message-control
+npm install remark-parse
 ```
 
 **remark-message-control** is also available as an AMD, CommonJS, and
@@ -15,64 +15,30 @@ globals module, [uncompressed and compressed][releases].
 
 ## Usage
 
-```javascript
-var remark = require('remark');
-var lint = require('remark-lint');
-var report = require('vfile-reporter');
-var control = require('./index.js');
-
-remark()
-    .use(function () {
-        return function (tree, file) {
-            var message = file.warn('Whoops!', tree.children[1]);
-
-            message.ruleId = 'thing';
-            message.source = 'foo';
-        };
-    })
-    .use(control, {
-        'name': 'foo'
-    })
-    .process([
-        '<!--foo ignore-->',
-        '',
-        '## Heading',
-        ''
-    ].join('\n'), function (err, file) {
-        console.log(report(file));
-        // <stdin>: no issues found
-    });
-```
-
 ## API
 
 ### `remark.use(control, options)`
 
 Let comment markers control messages from a certain source.
 
-**Options**:
+###### `options`
 
 *   `name` (`string`) — Name of markers which can control the
     message sources.
-
 *   `known` (`Array.<string>`, optional) — List of allowed
     `ruleId`s.  When given, a warning is triggered when
     someone tries to control an unknown rule.
-
 *   `reset` (`boolean`, default: `false`) — Whether to treat
     all messages as turned off initially.
-
 *   `enable` (`Array.<string>`, optional) — List of allowed
     `ruleId`s used when `reset: true` to initially turn on.
     By default (`reset: false`), all rules are turned on.
-
 *   `disable` (`Array.<string>`, optional) — List of disallowed
     `ruleId`s used when `reset: false` to initially turn off.
-
 *   `sources` (`string` or `Array.<string>`, optional) — One or more
     sources which markers by the specified `name` can control.
 
-### `Markers`
+### Markers
 
 #### `disable`
 
@@ -129,20 +95,24 @@ For example, to turn off certain messages for the next node:
 
 <!-- Definitions -->
 
-[travis-badge]: https://img.shields.io/travis/wooorm/remark-message-control.svg
+[build-badge]: https://img.shields.io/travis/wooorm/remark-message-control.svg
 
-[travis]: https://travis-ci.org/wooorm/remark-message-control
+[build-status]: https://travis-ci.org/wooorm/remark-message-control
 
-[codecov-badge]: https://img.shields.io/codecov/c/github/wooorm/remark-message-control.svg
+[coverage-badge]: https://img.shields.io/codecov/c/github/wooorm/remark-message-control.svg
 
-[codecov]: https://codecov.io/github/wooorm/remark-message-control
+[coverage-status]: https://codecov.io/github/wooorm/remark-message-control
 
-[npm-install]: https://docs.npmjs.com/cli/install
+[chat-badge]: https://img.shields.io/gitter/room/wooorm/remark.svg
+
+[chat]: https://gitter.im/wooorm/remark
 
 [releases]: https://github.com/wooorm/remark-message-control/releases
 
 [license]: LICENSE
 
 [author]: http://wooorm.com
+
+[npm]: https://docs.npmjs.com/cli/install
 
 [remark]: https://github.com/wooorm/remark
