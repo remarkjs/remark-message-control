@@ -7,7 +7,7 @@ Enable, disable, and ignore messages with [**remark**][remark].
 [npm][]:
 
 ```bash
-npm install remark-parse
+npm install remark-message-control
 ```
 
 **remark-message-control** is also available as an AMD, CommonJS, and
