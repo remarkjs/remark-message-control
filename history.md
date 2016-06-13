@@ -2,6 +2,11 @@
 
 <!--lint disable no-multiple-toplevel-headings -->
 
+2.0.2 / 2016-06-13
+==================
+
+*   Update metadata ([`ebd7416`](https://github.com/wooorm/remark-message-control/commit/ebd7416))
+
 2.0.1 / 2016-06-12
 ==================
 
