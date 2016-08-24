@@ -10,16 +10,42 @@ Enable, disable, and ignore messages with [**remark**][remark].
 npm install remark-message-control
 ```
 
-**remark-message-control** is also available as an AMD, CommonJS, and
-globals module, [uncompressed and compressed][releases].
-
 ## Usage
+
+```js
+var remark = require('remark');
+var report = require('vfile-reporter');
+var control = require('remark-message-control');
+
+remark().use(warn).use(control, {name: 'foo'}).process([
+  '<!--foo ignore-->',
+  '',
+  '## Heading',
+  ''
+].join('\n'), function (err, file) {
+  console.log(report(err || file));
+});
+
+function warn() {
+  return function (tree, file) {
+    var message = file.message('Whoops!', tree.children[1]);
+    message.ruleId = 'thing';
+    message.source = 'foo';
+  };
+}
+```
+
+Yields:
+
+```txt
+no issues found
+```
 
 ## API
 
 ### `remark.use(control, options)`
 
-Let comment markers control messages from a certain source.
+Let comment markers control messages from a certain sources.
 
 ###### `options`
 
@@ -106,8 +132,6 @@ For example, to turn off certain messages for the next node:
 [chat-badge]: https://img.shields.io/gitter/room/wooorm/remark.svg
 
 [chat]: https://gitter.im/wooorm/remark
-
-[releases]: https://github.com/wooorm/remark-message-control/releases
 
 [license]: LICENSE
 
