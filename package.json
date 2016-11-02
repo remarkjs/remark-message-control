@@ -10,17 +10,14 @@
     "marker",
     "control"
   ],
-  "files": [
-    "index.js"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/wooorm/remark-message-control.git"
-  },
+  "repository": "https://github.com/wooorm/remark-message-control",
   "bugs": "https://github.com/wooorm/remark-message-control/issues",
   "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
   "contributors": [
     "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"
+  ],
+  "files": [
+    "index.js"
   ],
   "dependencies": {
     "mdast-comment-marker": "^1.0.0",
