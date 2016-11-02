@@ -1,11 +1,3 @@
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module remark:message-control
- * @fileoverview Enable, disable, and ignore messages with remark.
- */
-
 'use strict';
 
 /* Dependencies. */
@@ -24,7 +16,7 @@ var ALLOWED_VERBS = {
 /* Expose. */
 module.exports = attacher;
 
-/* Filter .*/
+/* Filter. */
 function attacher(processor, options) {
   var name = options && options.name;
   var sources;
@@ -81,7 +73,7 @@ function attacher(processor, options) {
     function getState(ruleId) {
       var ranges = ruleId ? scope[ruleId] : globals;
 
-      if (ranges && ranges.length) {
+      if (ranges && ranges.length !== 0) {
         return ranges[ranges.length - 1].state;
       }
 
@@ -306,7 +298,7 @@ function detectGaps(ast, file) {
 
   /* Detect a new position. */
   function update(latest) {
-    if (latest == null) {
+    if (latest === null || latest === undefined) {
       isGap = true;
       return;
     }
