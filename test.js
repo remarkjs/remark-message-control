@@ -1,20 +1,10 @@
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module remark:message-control
- * @fileoverview Test suite for `remark-message-control`.
- */
-
 'use strict';
 
-/* Dependencies. */
 var test = require('tape');
 var remark = require('remark');
 var toc = require('remark-toc');
 var control = require('./index.js');
 
-/* Tests. */
 test('control()', function (t) {
   t.throws(function () {
     remark().use(control);
