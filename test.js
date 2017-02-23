@@ -7,11 +7,11 @@ var control = require('./index.js');
 
 test('control()', function (t) {
   t.throws(function () {
-    remark().use(control);
+    remark().use(control).freeze();
   }, /Expected `name` in `options`, got `undefined`/);
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
+  remark().use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[1]);
@@ -35,8 +35,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
+  remark().use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[1]);
@@ -60,8 +60,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo', reset: true});
+  remark().use(function () {
+    var transformer = control({name: 'foo', reset: true});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[0]);
@@ -92,8 +92,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo', reset: true});
+  remark().use(function () {
+    var transformer = control({name: 'foo', reset: true});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[1]);
@@ -117,8 +117,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
+  remark().use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[1]);
@@ -151,8 +151,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
+  remark().use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[1]);
@@ -185,8 +185,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
+  remark().use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[1]);
@@ -217,8 +217,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
+  remark().use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[1]);
@@ -249,8 +249,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
+  remark().use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[1]);
@@ -279,27 +279,19 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    return control(processor, {name: 'foo'});
-  }).process([
-    '<!--foo test-->'
-  ].join('\n'), function (err, file) {
-    var message = '1:1-1:16: Unknown keyword `test`: ' +
-        'expected `\'enable\'`, `\'disable\'`, or `\'ignore\'`';
-
-    t.equal(String(err), message);
-
-    t.deepEqual(
-      file.messages.map(String),
-      [message],
+  remark().use(function () {
+    return control({name: 'foo'});
+  }).process('<!--foo test-->', function (err) {
+    t.equal(
+      String(err),
+      '1:1-1:16: Unknown keyword `test`: ' +
+      'expected `\'enable\'`, `\'disable\'`, or `\'ignore\'`',
       'should fail on invalid verbs'
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
-
-    processor.use(toc);
+  remark().use(toc).use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error', {line: 5, column: 1});
@@ -332,8 +324,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
+  remark().use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error', {line: 5, column: 1});
@@ -367,8 +359,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
+  remark().use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error');
@@ -388,8 +380,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
+  remark().use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error', ast.position.end);
@@ -412,8 +404,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
+  remark().use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[1].position.end);
@@ -437,8 +429,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
+  remark().use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[1]);
@@ -471,8 +463,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo'});
+  remark().use(function () {
+    var transformer = control({name: 'foo'});
 
     return function (ast, file) {
       var message = file.message('Error');
@@ -494,8 +486,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    return control(processor, {name: 'foo'});
+  remark().use(function () {
+    return control({name: 'foo'});
   }).process([
     '<!doctype html>',
     '',
@@ -510,8 +502,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    return control(processor, {name: 'foo', known: ['known']});
+  remark().use(function () {
+    return control({name: 'foo', known: ['known']});
   }).process([
     '<!--foo ignore known-->',
     '',
@@ -526,8 +518,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo', source: 'baz'});
+  remark().use(function () {
+    var transformer = control({name: 'foo', source: 'baz'});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[1]);
@@ -551,8 +543,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'alpha', source: ['bravo', 'charlie']});
+  remark().use(function () {
+    var transformer = control({name: 'alpha', source: ['bravo', 'charlie']});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[1]);
@@ -585,8 +577,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {name: 'foo', disable: ['bar']});
+  remark().use(function () {
+    var transformer = control({name: 'foo', disable: ['bar']});
 
     return function (ast, file) {
       var message = file.message('Error', ast.children[0]);
@@ -608,8 +600,8 @@ test('control()', function (t) {
     );
   });
 
-  remark().use(function (processor) {
-    var transformer = control(processor, {
+  remark().use(function () {
+    var transformer = control({
       name: 'foo',
       reset: true,
       enable: ['bar']

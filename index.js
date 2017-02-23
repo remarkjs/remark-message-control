@@ -17,7 +17,7 @@ var ALLOWED_VERBS = {
 module.exports = attacher;
 
 /* Filter. */
-function attacher(processor, options) {
+function attacher(options) {
   var name = options && options.name;
   var sources;
   var known;

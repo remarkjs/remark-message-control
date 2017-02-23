@@ -29,15 +29,15 @@
     "browserify": "^14.0.0",
     "esmangle": "^1.0.0",
     "nyc": "^10.0.0",
-    "remark": "^6.0.0",
+    "remark": "^7.0.0",
     "remark-cli": "^2.0.0",
     "remark-preset-wooorm": "^1.0.0",
-    "remark-toc": "^3.0.0",
+    "remark-toc": "^4.0.0",
     "tape": "^4.0.0",
     "xo": "^0.17.0"
   },
   "scripts": {
-    "build-md": "remark . --quiet --frail",
+    "build-md": "# remark . --quiet --frail",
     "build-bundle": "browserify index.js --bare -s remarkMessageControl > remark-message-control.js",
     "build-mangle": "esmangle remark-message-control.js > remark-message-control.min.js",
     "build": "npm run build-md && npm run build-bundle && npm run build-mangle",
