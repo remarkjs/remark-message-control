@@ -32,7 +32,7 @@
     "remark": "^6.0.0",
     "remark-cli": "^2.0.0",
     "remark-preset-wooorm": "^1.0.0",
-    "remark-toc": "^3.0.0",
+    "remark-toc": "^4.0.0",
     "tape": "^4.0.0",
     "xo": "^0.17.0"
   },
