@@ -95,7 +95,8 @@ function attacher(options) {
       var previousState;
 
       if (!markers) {
-        markers = scope[ruleId] = [];
+        markers = [];
+        scope[ruleId] = markers;
       }
 
       previousState = getState(ruleId);
