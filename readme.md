@@ -12,19 +12,28 @@ npm install remark-message-control
 
 ## Usage
 
-```js
-var remark = require('remark');
+Say we have the following file, `example.md`:
+
+```markdown
+<!--foo ignore-->
+
+## Heading
+```
+
+And our script, `example.js`, looks as follows:
+
+```javascript
+var vfile = require('to-vfile');
 var report = require('vfile-reporter');
+var remark = require('remark');
 var control = require('remark-message-control');
 
-remark().use(warn).use(control, {name: 'foo'}).process([
-  '<!--foo ignore-->',
-  '',
-  '## Heading',
-  ''
-].join('\n'), function (err, file) {
-  console.log(report(err || file));
-});
+remark()
+  .use(warn)
+  .use(control, {name: 'foo'})
+  .process(vfile.readSync('example.md'), function (err, file) {
+    console.error(report(err || file));
+  });
 
 function warn() {
   return function (tree, file) {
@@ -35,10 +44,10 @@ function warn() {
 }
 ```
 
-Yields:
+Now, running `node example` yields:
 
-```txt
-no issues found
+```markdown
+example.md: no issues found
 ```
 
 ## API
