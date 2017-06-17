@@ -56,22 +56,36 @@ example.md: no issues found
 
 Let comment markers control messages from a certain sources.
 
-###### `options`
+##### `options`
 
-*   `name` (`string`) — Name of markers which can control the
-    message sources.
-*   `known` (`Array.<string>`, optional) — List of allowed
-    `ruleId`s.  When given, a warning is triggered when
-    someone tries to control an unknown rule.
-*   `reset` (`boolean`, default: `false`) — Whether to treat
-    all messages as turned off initially.
-*   `enable` (`Array.<string>`, optional) — List of allowed
-    `ruleId`s used when `reset: true` to initially turn on.
-    By default (`reset: false`), all rules are turned on.
-*   `disable` (`Array.<string>`, optional) — List of disallowed
-    `ruleId`s used when `reset: false` to initially turn off.
-*   `sources` (`string` or `Array.<string>`, optional) — One or more
-    sources which markers by the specified `name` can control.
+##### `options.name`
+
+`string` — Name of markers which can control the message sources.
+
+##### `options.known`
+
+`Array.<string>`, optional — List of allowed `ruleId`s.  When given, a warning
+is triggered when someone tries to control an unknown rule.
+
+##### `options.reset`
+
+`boolean`, default: `false` — Whether to treat all messages as turned off
+initially.
+
+##### `options.enable`
+
+`Array.<string>`, optional — List of allowed `ruleId`s used when `reset: true`
+to initially turn on.  By default (`reset: false`), all rules are turned on.
+
+##### `options.disable`
+
+`Array.<string>`, optional — List of disallowed `ruleId`s used when
+`reset: false` to initially turn off.
+
+##### `options.sources`
+
+`string` or `Array.<string>`, optional — One or more sources which markers by
+the specified `name` can control.
 
 ### Markers
 
