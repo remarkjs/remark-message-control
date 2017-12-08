@@ -10,8 +10,8 @@
     "marker",
     "control"
   ],
-  "repository": "https://github.com/wooorm/remark-message-control",
-  "bugs": "https://github.com/wooorm/remark-message-control/issues",
+  "repository": "remarkjs/remark-message-control",
+  "bugs": "https://github.com/remarkjs/remark-message-control/issues",
   "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
   "contributors": [
     "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"

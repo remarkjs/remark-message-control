@@ -144,17 +144,17 @@ For example, to turn off certain messages for the next node:
 
 <!-- Definitions -->
 
-[build-badge]: https://img.shields.io/travis/wooorm/remark-message-control.svg
+[build-badge]: https://img.shields.io/travis/remarkjs/remark-message-control.svg
 
-[build-status]: https://travis-ci.org/wooorm/remark-message-control
+[build-status]: https://travis-ci.org/remarkjs/remark-message-control
 
-[coverage-badge]: https://img.shields.io/codecov/c/github/wooorm/remark-message-control.svg
+[coverage-badge]: https://img.shields.io/codecov/c/github/remarkjs/remark-message-control.svg
 
-[coverage-status]: https://codecov.io/github/wooorm/remark-message-control
+[coverage-status]: https://codecov.io/github/remarkjs/remark-message-control
 
-[chat-badge]: https://img.shields.io/gitter/room/wooorm/remark.svg
+[chat-badge]: https://img.shields.io/gitter/room/remarkjs/Lobby.svg
 
-[chat]: https://gitter.im/wooorm/remark
+[chat]: https://gitter.im/remarkjs/Lobby
 
 [license]: LICENSE
 
@@ -162,4 +162,4 @@ For example, to turn off certain messages for the next node:
 
 [npm]: https://docs.npmjs.com/cli/install
 
-[remark]: https://github.com/wooorm/remark
+[remark]: https://github.com/remarkjs/remark
