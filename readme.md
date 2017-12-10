@@ -37,9 +37,7 @@ remark()
 
 function warn() {
   return function (tree, file) {
-    var message = file.message('Whoops!', tree.children[1]);
-    message.ruleId = 'thing';
-    message.source = 'foo';
+    file.message('Whoops!', tree.children[1], 'foo:thing');
   };
 }
 ```
@@ -56,42 +54,55 @@ example.md: no issues found
 
 Let comment markers control messages from a certain sources.
 
-##### `options`
+##### Options
 
-##### `options.name`
+###### `options.name`
 
-`string` — Name of markers which can control the message sources.
+`string` — Name of markers that can control the message sources.
 
-##### `options.known`
+For example, `{name: 'alpha'}` controls `alpha` markers:
+
+```markdown
+<!--alpha ignore-->
+```
+
+###### `options.known`
 
 `Array.<string>`, optional — List of allowed `ruleId`s.  When given, a warning
-is triggered when someone tries to control an unknown rule.
+is shown when someone tries to control an unknown rule.
 
-##### `options.reset`
+For example, `{name: 'alpha', known: ['bravo']}` results in a warning if
+`charlie` is configured:
+
+```markdown
+<!--alpha ignore charlie-->
+```
+
+###### `options.reset`
 
 `boolean`, default: `false` — Whether to treat all messages as turned off
 initially.
 
-##### `options.enable`
+###### `options.enable`
 
 `Array.<string>`, optional — List of allowed `ruleId`s used when `reset: true`
 to initially turn on.  By default (`reset: false`), all rules are turned on.
 
-##### `options.disable`
+###### `options.disable`
 
 `Array.<string>`, optional — List of disallowed `ruleId`s used when
 `reset: false` to initially turn off.
 
-##### `options.sources`
+###### `options.sources`
 
 `string` or `Array.<string>`, optional — One or more sources which markers by
-the specified `name` can control.
+the specified `name` can control.  Defaults to `options.name`.
 
 ### Markers
 
-#### `disable`
+###### `disable`
 
-The “disable” marker turns off all messages of the given rule
+The **disable** marker turns off all messages of the given rule
 identifiers.  When without identifiers, all messages are turned
 off.
 
@@ -107,9 +118,9 @@ A paragraph, and now another list.
   * __bar__
 ```
 
-#### `enable`
+###### `enable`
 
-The “enable” marker turns on all messages of the given rule
+The **enable** marker turns on all messages of the given rule
 identifiers.  When without identifiers, all messages are turned
 on.
 
@@ -121,13 +132,13 @@ For example, to enable certain messages:
 **foo** and __bar__.
 ```
 
-#### `ignore`
+###### `ignore`
 
-The “ignore” marker turns off all messages of the given rule
-identifiers for the duration of the following node.  When without
+The **ignore** marker turns off all messages of the given rule
+identifiers occurring in the following node.  When without
 identifiers, all messages are turned off.
 
-After the end of the adjacent node, messages are allowed again.
+After the end of the following node, messages are allowed again.
 
 For example, to turn off certain messages for the next node:
 
@@ -140,7 +151,8 @@ For example, to turn off certain messages for the next node:
 
 ## Contribute
 
-See [`contribute.md` in `remarkjs/remarkj`][contribute] for ways to get started.
+See [`contribute.md` in `remarkjs/remarkjs`][contribute] for ways to get
+started.
 
 This organisation has a [Code of Conduct][coc].  By interacting with this
 repository, organisation, or community you agree to abide by its terms.
