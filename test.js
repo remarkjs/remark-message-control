@@ -3,7 +3,7 @@
 var test = require('tape');
 var remark = require('remark');
 var toc = require('remark-toc');
-var control = require('./index.js');
+var control = require('./');
 
 test('control()', function (t) {
   t.throws(function () {
@@ -13,13 +13,9 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[1]);
-
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+    return function (tree, file) {
+      file.message('Error', tree.children[1], 'foo:bar');
+      transformer(tree, file);
     };
   }).process([
     '<!--foo disable bar-->',
@@ -38,13 +34,10 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[1]);
+    return function (tree, file) {
+      file.message('Error', tree.children[1], 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '<!--foo disable-->',
@@ -63,18 +56,11 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo', reset: true});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[0]);
+    return function (tree, file) {
+      file.message('Error', tree.children[0], 'foo:bar');
+      file.message('Error', tree.children[2], 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      message = file.message('Error', ast.children[2]);
-
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     'This is a paragraph.',
@@ -95,13 +81,10 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo', reset: true});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[1]);
+    return function (tree, file) {
+      file.message('Error', tree.children[1], 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '<!--foo enable bar-->',
@@ -120,18 +103,11 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[1]);
+    return function (tree, file) {
+      file.message('Error', tree.children[1], 'foo:bar');
+      file.message('Error', tree.children[3], 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      message = file.message('Error', ast.children[3]);
-
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '<!--foo disable bar-->',
@@ -154,18 +130,11 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[1]);
+    return function (tree, file) {
+      file.message('Error', tree.children[1], 'foo:bar');
+      file.message('Error', tree.children[3], 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      message = file.message('Error', ast.children[3]);
-
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '<!--foo disable bar-->',
@@ -188,18 +157,11 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[1]);
+    return function (tree, file) {
+      file.message('Error', tree.children[1], 'foo:bar');
+      file.message('Error', tree.children[2], 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      message = file.message('Error', ast.children[2]);
-
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '<!--foo ignore bar-->',
@@ -220,18 +182,11 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[1]);
+    return function (tree, file) {
+      file.message('Error', tree.children[1], 'foo:bar');
+      file.message('Error', tree.children[2], 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      message = file.message('Error', ast.children[2]);
-
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '<!--foo ignore-->',
@@ -252,18 +207,11 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[1]);
+    return function (tree, file) {
+      file.message('Error', tree.children[1], 'foo:bar');
+      file.message('Error', tree.children[1], 'foo:baz');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      message = file.message('Error', ast.children[1]);
-
-      message.ruleId = 'baz';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '<!--foo ignore bar baz-->',
@@ -293,18 +241,11 @@ test('control()', function (t) {
   remark().use(toc).use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error', {line: 5, column: 1});
+    return function (tree, file) {
+      file.message('Error', {line: 5, column: 1}, 'foo:bar');
+      file.message('Error', {line: 7, column: 1}, 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      message = file.message('Error', {line: 7, column: 1});
-
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '# README',
@@ -327,21 +268,14 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error', {line: 5, column: 1});
-
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      message = file.message('Error', {line: 5, column: 1});
-
-      message.ruleId = 'bar';
-      message.source = 'foo';
+    return function (tree, file) {
+      file.message('Error', {line: 5, column: 1}, 'foo:bar');
+      file.message('Error', {line: 5, column: 1}, 'foo:bar');
 
       /* Remove list. */
-      ast.children.pop();
+      tree.children.pop();
 
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '# README',
@@ -362,13 +296,10 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error');
+    return function (tree, file) {
+      file.message('Error', 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process('', function (err, file) {
     t.ifError(err, 'should not fail');
@@ -383,13 +314,10 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.position.end);
+    return function (tree, file) {
+      file.message('Error', tree.position.end, 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '# README',
@@ -407,13 +335,10 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[1].position.end);
+    return function (tree, file) {
+      file.message('Error', tree.children[1].position.end, 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '# README',
@@ -432,18 +357,11 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[1]);
+    return function (tree, file) {
+      file.message('Error', tree.children[1], 'foo:bar');
+      file.message('Error', tree.children[3], 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      message = file.message('Error', ast.children[3]);
-
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '<!--foo disable bar-->',
@@ -466,13 +384,10 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo'});
 
-    return function (ast, file) {
-      var message = file.message('Error');
+    return function (tree, file) {
+      file.message('Error', 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     'Foo'
@@ -521,13 +436,10 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo', source: 'baz'});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[1]);
+    return function (tree, file) {
+      file.message('Error', tree.children[1], 'baz:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'baz';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '<!--foo ignore bar-->',
@@ -546,18 +458,11 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'alpha', source: ['bravo', 'charlie']});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[1]);
+    return function (tree, file) {
+      file.message('Error', tree.children[1], 'bravo:delta');
+      file.message('Error', tree.children[3], 'charlie:echo');
 
-      message.ruleId = 'delta';
-      message.source = 'bravo';
-
-      message = file.message('Error', ast.children[3]);
-
-      message.ruleId = 'echo';
-      message.source = 'charlie';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     '<!--alpha ignore delta-->',
@@ -580,13 +485,10 @@ test('control()', function (t) {
   remark().use(function () {
     var transformer = control({name: 'foo', disable: ['bar']});
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[0]);
+    return function (tree, file) {
+      file.message('Error', tree.children[0], 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     'This is a paragraph.'
@@ -607,13 +509,10 @@ test('control()', function (t) {
       enable: ['bar']
     });
 
-    return function (ast, file) {
-      var message = file.message('Error', ast.children[0]);
+    return function (tree, file) {
+      file.message('Error', tree.children[0], 'foo:bar');
 
-      message.ruleId = 'bar';
-      message.source = 'foo';
-
-      transformer(ast, file);
+      transformer(tree, file);
     };
   }).process([
     'This is a paragraph.'
