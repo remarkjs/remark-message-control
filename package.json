@@ -1,6 +1,6 @@
 {
   "name": "remark-message-control",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "description": "Enable, disable, and ignore messages with remark",
   "license": "MIT",
   "keywords": [
