@@ -5,3 +5,4 @@ coverage/
 node_modules/
 remark-message-control.js
 remark-message-control.min.js
+yarn.lock
