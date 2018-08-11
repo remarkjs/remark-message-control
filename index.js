@@ -1,16 +1,11 @@
-'use strict';
+'use strict'
 
-var control = require('unified-message-control');
-var marker = require('mdast-comment-marker');
-var xtend = require('xtend');
+var control = require('unified-message-control')
+var marker = require('mdast-comment-marker')
+var xtend = require('xtend')
 
-module.exports = messageControl;
+module.exports = messageControl
 
 function messageControl(options) {
-  var settings = options || {};
-
-  return control(xtend(options, {
-    marker: settings.marker || marker,
-    test: settings.test || 'html'
-  }));
+  return control(xtend({marker: marker, test: 'html'}, options))
 }
