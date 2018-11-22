@@ -1,4 +1,11 @@
-# remark-message-control [![Build Status][build-badge]][build-status] [![Coverage Status][coverage-badge]][coverage-status] [![Chat][chat-badge]][chat]
+# remark-message-control
+
+[![Build][build-badge]][build]
+[![Coverage][coverage-badge]][coverage]
+[![Downloads][downloads-badge]][downloads]
+[![Chat][chat-badge]][chat]
+[![Sponsors][sponsors-badge]][collective]
+[![Backers][backers-badge]][collective]
 
 Enable, disable, and ignore messages with [**remark**][remark].
 
@@ -165,15 +172,25 @@ repository, organisation, or community you agree to abide by its terms.
 
 [build-badge]: https://img.shields.io/travis/remarkjs/remark-message-control.svg
 
-[build-status]: https://travis-ci.org/remarkjs/remark-message-control
+[build]: https://travis-ci.org/remarkjs/remark-message-control
 
 [coverage-badge]: https://img.shields.io/codecov/c/github/remarkjs/remark-message-control.svg
 
-[coverage-status]: https://codecov.io/github/remarkjs/remark-message-control
+[coverage]: https://codecov.io/github/remarkjs/remark-message-control
 
-[chat-badge]: https://img.shields.io/gitter/room/remarkjs/Lobby.svg
+[downloads-badge]: https://img.shields.io/npm/dm/remark-message-control.svg
 
-[chat]: https://gitter.im/remarkjs/Lobby
+[downloads]: https://www.npmjs.com/package/remark-message-control
+
+[chat-badge]: https://img.shields.io/badge/join%20the%20community-on%20spectrum-7b16ff.svg
+
+[chat]: https://spectrum.chat/unified/remark
+
+[sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
+
+[backers-badge]: https://opencollective.com/unified/backers/badge.svg
+
+[collective]: https://opencollective.com/unified
 
 [license]: license
 
