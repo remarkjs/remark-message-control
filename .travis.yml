@@ -1,7 +1,7 @@
 language: node_js
 node_js:
-- lts/boron
-- node
+  - lts/dubnium
+  - node
 after_script: bash <(curl -s https://codecov.io/bash)
 deploy:
   provider: releases
@@ -9,7 +9,7 @@ deploy:
   api_key:
     secure: kvVgBMc38d+k3ZB7MG0tq35FFrdQxN8fPk4FIKJYJEjLbttyMX7fjdDT/XL35gmdGap7j3TFRmZhgQ0vzR8hGYXKdIpMLCSoY9Mm6FSLmjxfqWA2gaR3VnJH3rGJeEucOwhcxSzYEpYXDgbwIMd7m1fgj94lWhG1LK6UXkH6rNvsloHWanlE3Sjxgj/l1UzOFF6SSNtC0FGToF4me7u4BIVDXJCJIUVybF6XqDrbf/w5jRIPhn19WVLB9vU/nDZ3yFTnbXjv7My7QevFChNiGUEQXnjFCQ8HSs/8ga+kHZj1+pHewSE/MPg1FnuaS1f67vefjWeQ7mB1YE2ZTZg7TjhveZcs4zoyH1JbuwZEvN1vWSPO2D8Gpz98Hck0Q5FYUQIWwNTHJ2+HFdsfAk7V9SrbJj8qZu8I6hATnSNOlwDcKJHYsxrpcv8rxjut/qZkL06VI0PnsPUGqOJUwMxPa2QAYW1fstEJ9B9LF281qfBErL0FYdxEq62FT82Rqr2RVCN56Gngo6sdP1dQySTKvg79nnujoPc7K+rW/P3A3xxF2P8KCcugd+NZYc39ewfbXr8mcOOv+huF9WlvrMEVJcFBT8UswHfIPXf5bZfLBn14Q8eUD6KC4XOwOLUnFYAx+GLUFgoAyAlj1dqjxxFoNih0k4rPQhRHoZgo7qhP7N8=
   file:
-    - "remark-message-control.js"
-    - "remark-message-control.min.js"
+    - 'remark-message-control.js'
+    - 'remark-message-control.min.js'
   on:
     tags: true
