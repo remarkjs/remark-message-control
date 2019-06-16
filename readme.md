@@ -115,7 +115,7 @@ When without identifiers, all messages are turned off.
 
 For example, to turn off certain messages:
 
-```md
+```markdown
 <!--lint disable list-item-bullet-indent strong-marker-->
 
 *   **foo**
@@ -132,7 +132,7 @@ When without identifiers, all messages are turned on.
 
 For example, to enable certain messages:
 
-```md
+```markdown
 <!--lint enable strong-marker-->
 
 **foo** and __bar__.
@@ -148,7 +148,7 @@ After the end of the following node, messages are turned on again.
 
 For example, to turn off certain messages for the next node:
 
-```md
+```markdown
 <!--lint ignore list-item-bullet-indent strong-marker-->
 
 *   **foo**
