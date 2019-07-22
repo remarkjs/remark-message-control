@@ -155,6 +155,14 @@ For example, to turn off certain messages for the next node:
   * __bar__
 ```
 
+## Security
+
+Use of `remark-message-control` does not involve [**rehype**][rehype]
+([**hast**][hast]) or user content so there are no openings for
+[cross-site scripting (XSS)][xss] attacks.
+Messages may be hidden from user content though, causing builds to fail or pass,
+or changing a report.
+
 ## Contribute
 
 See [`contributing.md`][contributing] in [`remarkjs/.github`][health] for ways
@@ -212,3 +220,9 @@ abide by its terms.
 [author]: https://wooorm.com
 
 [remark]: https://github.com/remarkjs/remark
+
+[xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
+
+[rehype]: https://github.com/rehypejs/rehype
+
+[hast]: https://github.com/syntax-tree/hast
