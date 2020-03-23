@@ -5,16 +5,14 @@ var remark = require('remark')
 var toc = require('remark-toc')
 var control = require('.')
 
-test('control()', function(t) {
-  t.throws(function() {
-    remark()
-      .use(control)
-      .freeze()
+test('control()', function (t) {
+  t.throws(function () {
+    remark().use(control).freeze()
   }, /Expected `name` in `options`, got `undefined`/)
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -30,7 +28,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -46,7 +44,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo', reset: true})
         return transform
         function transform(tree, file) {
@@ -71,7 +69,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo', reset: true})
         return transform
         function transform(tree, file) {
@@ -87,7 +85,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -114,7 +112,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -141,7 +139,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -166,7 +164,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -191,7 +189,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -207,9 +205,9 @@ test('control()', function(t) {
   )
 
   t.throws(
-    function() {
+    function () {
       remark()
-        .use(function() {
+        .use(function () {
           return control({name: 'foo'})
         })
         .processSync('<!--foo test-->')
@@ -221,7 +219,7 @@ test('control()', function(t) {
   t.deepEqual(
     remark()
       .use(toc)
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -248,7 +246,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -277,7 +275,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -293,7 +291,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -309,7 +307,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -325,7 +323,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -352,7 +350,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo'})
         return transform
         function transform(tree, file) {
@@ -368,7 +366,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         return control({name: 'foo'})
       })
       .processSync('<!doctype html>\n\n<!--bar baz qux-->')
@@ -379,7 +377,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         return control({name: 'foo', known: ['known']})
       })
       .processSync('<!--foo ignore known-->\n\n<!--foo ignore unknown-->')
@@ -390,7 +388,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo', source: 'baz'})
         return transform
         function transform(tree, file) {
@@ -406,7 +404,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'alpha', source: ['bravo', 'charlie']})
         return transform
         function transform(tree, file) {
@@ -433,7 +431,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo', disable: ['bar']})
         return transform
         function transform(tree, file) {
@@ -449,7 +447,7 @@ test('control()', function(t) {
 
   t.deepEqual(
     remark()
-      .use(function() {
+      .use(function () {
         var transformer = control({name: 'foo', reset: true, enable: ['bar']})
         return transform
         function transform(tree, file) {
