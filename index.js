@@ -2,7 +2,6 @@
 
 var control = require('unified-message-control')
 var marker = require('mdast-comment-marker')
-var xtend = require('xtend')
 
 module.exports = messageControl
 
@@ -12,5 +11,5 @@ var test = [
 ]
 
 function messageControl(options) {
-  return control(xtend({marker: marker, test: test}, options))
+  return control(Object.assign({marker: marker, test: test}, options))
 }
