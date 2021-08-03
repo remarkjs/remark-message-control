@@ -1,9 +1,7 @@
-'use strict'
-
-var test = require('tape')
-var remark = require('remark')
-var toc = require('remark-toc')
-var control = require('.')
+import test from 'tape'
+import remark from 'remark'
+import toc from 'remark-toc'
+import control from './index.js'
 
 test('control()', function (t) {
   t.throws(function () {
