@@ -44,7 +44,7 @@
     "remark-preset-wooorm": "^8.0.0",
     "remark-toc": "^7.0.0",
     "tape": "^5.0.0",
-    "xo": "^0.37.0"
+    "xo": "^0.39.0"
   },
   "scripts": {
     "format": "remark . -qfo && prettier . -w --loglevel warn && xo --fix",
@@ -61,13 +61,7 @@
     "trailingComma": "none"
   },
   "xo": {
-    "prettier": true,
-    "rules": {
-      "no-var": "off",
-      "prefer-arrow-callback": "off",
-      "unicorn/no-array-callback-reference": "off",
-      "guard-for-in": "off"
-    }
+    "prettier": true
   },
   "remarkConfig": {
     "plugins": [

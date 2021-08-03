@@ -1,7 +1,7 @@
 import unifiedMessageControl from 'unified-message-control'
 import {commentMarker} from 'mdast-comment-marker'
 
-var test = [
+const test = [
   'html', // Comments are `html` nodes in mdast.
   'comment' // In MDX, comments have their own node.
 ]
