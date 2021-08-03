@@ -1,5 +1,2 @@
 coverage/
-remark-message-control.js
-remark-message-control.min.js
-*.json
 *.md
