@@ -5,6 +5,7 @@ import remarkMessageControl from './index.js'
 
 test('remarkMessageControl', (t) => {
   t.throws(() => {
+    // @ts-expect-error: options missing.
     remark().use(remarkMessageControl).freeze()
   }, /Expected `name` in `options`, got `undefined`/)
 
@@ -12,8 +13,7 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[1], 'foo:bar')
           transformer(tree, file)
         }
@@ -28,8 +28,7 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[1], 'foo:bar')
           transformer(tree, file)
         }
@@ -44,8 +43,7 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo', reset: true})
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[0], 'foo:bar')
           file.message('Error', tree.children[2], 'foo:bar')
           transformer(tree, file)
@@ -69,8 +67,7 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo', reset: true})
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[1], 'foo:bar')
           transformer(tree, file)
         }
@@ -85,8 +82,7 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[1], 'foo:bar')
           file.message('Error', tree.children[3], 'foo:bar')
           transformer(tree, file)
@@ -112,8 +108,7 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[1], 'foo:bar')
           file.message('Error', tree.children[3], 'foo:bar')
           transformer(tree, file)
@@ -139,8 +134,7 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[1], 'foo:bar')
           file.message('Error', tree.children[2], 'foo:bar')
           transformer(tree, file)
@@ -164,8 +158,7 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[1], 'foo:bar')
           file.message('Error', tree.children[2], 'foo:bar')
           transformer(tree, file)
@@ -189,8 +182,7 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[1], 'foo:bar')
           file.message('Error', tree.children[1], 'foo:baz')
           transformer(tree, file)
@@ -219,8 +211,7 @@ test('remarkMessageControl', (t) => {
       .use(remarkToc)
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', {line: 5, column: 1}, 'foo:bar')
           file.message('Error', {line: 7, column: 1}, 'foo:bar')
           transformer(tree, file)
@@ -246,8 +237,7 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', {line: 5, column: 1}, 'foo:bar')
           file.message('Error', {line: 5, column: 1}, 'foo:bar')
 
@@ -275,9 +265,8 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
-          file.message('Error', 'foo:bar')
+        return (tree, file) => {
+          file.message('Error', undefined, 'foo:bar')
           transformer(tree, file)
         }
       })
@@ -291,9 +280,8 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
-          file.message('Error', tree.position.end, 'foo:bar')
+        return (tree, file) => {
+          file.message('Error', tree.position && tree.position.end, 'foo:bar')
           transformer(tree, file)
         }
       })
@@ -307,9 +295,12 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
-          file.message('Error', tree.children[1].position.end, 'foo:bar')
+        return (tree, file) => {
+          file.message(
+            'Error',
+            tree.children[1].position && tree.children[1].position.end,
+            'foo:bar'
+          )
           transformer(tree, file)
         }
       })
@@ -323,8 +314,7 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[1], 'foo:bar')
           file.message('Error', tree.children[3], 'foo:bar')
           transformer(tree, file)
@@ -350,9 +340,8 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo'})
-        return transform
-        function transform(tree, file) {
-          file.message('Error', 'foo:bar')
+        return (tree, file) => {
+          file.message('Error', undefined, 'foo:bar')
           transformer(tree, file)
         }
       })
@@ -388,8 +377,7 @@ test('remarkMessageControl', (t) => {
     remark()
       .use(() => {
         const transformer = remarkMessageControl({name: 'foo', source: 'baz'})
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[1], 'baz:bar')
           transformer(tree, file)
         }
@@ -407,8 +395,7 @@ test('remarkMessageControl', (t) => {
           name: 'alpha',
           source: ['bravo', 'charlie']
         })
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[1], 'bravo:delta')
           file.message('Error', tree.children[3], 'charlie:echo')
           transformer(tree, file)
@@ -435,10 +422,10 @@ test('remarkMessageControl', (t) => {
       .use(() => {
         const transformer = remarkMessageControl({
           name: 'foo',
+          reset: false,
           disable: ['bar']
         })
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[0], 'foo:bar')
           transformer(tree, file)
         }
@@ -457,8 +444,7 @@ test('remarkMessageControl', (t) => {
           reset: true,
           enable: ['bar']
         })
-        return transform
-        function transform(tree, file) {
+        return (tree, file) => {
           file.message('Error', tree.children[0], 'foo:bar')
           transformer(tree, file)
         }
