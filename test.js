@@ -1,17 +1,17 @@
 import test from 'tape'
-import remark from 'remark'
-import toc from 'remark-toc'
-import control from './index.js'
+import {remark} from 'remark'
+import remarkToc from 'remark-toc'
+import remarkMessageControl from './index.js'
 
-test('control()', function (t) {
+test('remarkMessageControl', function (t) {
   t.throws(function () {
-    remark().use(control).freeze()
+    remark().use(remarkMessageControl).freeze()
   }, /Expected `name` in `options`, got `undefined`/)
 
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[1], 'foo:bar')
@@ -27,7 +27,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[1], 'foo:bar')
@@ -43,7 +43,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo', reset: true})
+        var transformer = remarkMessageControl({name: 'foo', reset: true})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[0], 'foo:bar')
@@ -68,7 +68,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo', reset: true})
+        var transformer = remarkMessageControl({name: 'foo', reset: true})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[1], 'foo:bar')
@@ -84,7 +84,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[1], 'foo:bar')
@@ -111,7 +111,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[1], 'foo:bar')
@@ -138,7 +138,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[1], 'foo:bar')
@@ -163,7 +163,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[1], 'foo:bar')
@@ -188,7 +188,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[1], 'foo:bar')
@@ -206,7 +206,7 @@ test('control()', function (t) {
     function () {
       remark()
         .use(function () {
-          return control({name: 'foo'})
+          return remarkMessageControl({name: 'foo'})
         })
         .processSync('<!--foo test-->')
     },
@@ -216,9 +216,9 @@ test('control()', function (t) {
 
   t.deepEqual(
     remark()
-      .use(toc)
+      .use(remarkToc)
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', {line: 5, column: 1}, 'foo:bar')
@@ -245,7 +245,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', {line: 5, column: 1}, 'foo:bar')
@@ -274,7 +274,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', 'foo:bar')
@@ -290,7 +290,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.position.end, 'foo:bar')
@@ -306,7 +306,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[1].position.end, 'foo:bar')
@@ -322,7 +322,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[1], 'foo:bar')
@@ -349,7 +349,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo'})
+        var transformer = remarkMessageControl({name: 'foo'})
         return transform
         function transform(tree, file) {
           file.message('Error', 'foo:bar')
@@ -365,7 +365,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        return control({name: 'foo'})
+        return remarkMessageControl({name: 'foo'})
       })
       .processSync('<!doctype html>\n\n<!--bar baz qux-->')
       .messages.map(String),
@@ -376,7 +376,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        return control({name: 'foo', known: ['known']})
+        return remarkMessageControl({name: 'foo', known: ['known']})
       })
       .processSync('<!--foo ignore known-->\n\n<!--foo ignore unknown-->')
       .messages.map(String),
@@ -387,7 +387,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo', source: 'baz'})
+        var transformer = remarkMessageControl({name: 'foo', source: 'baz'})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[1], 'baz:bar')
@@ -403,7 +403,10 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'alpha', source: ['bravo', 'charlie']})
+        var transformer = remarkMessageControl({
+          name: 'alpha',
+          source: ['bravo', 'charlie']
+        })
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[1], 'bravo:delta')
@@ -430,7 +433,7 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo', disable: ['bar']})
+        var transformer = remarkMessageControl({name: 'foo', disable: ['bar']})
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[0], 'foo:bar')
@@ -446,7 +449,11 @@ test('control()', function (t) {
   t.deepEqual(
     remark()
       .use(function () {
-        var transformer = control({name: 'foo', reset: true, enable: ['bar']})
+        var transformer = remarkMessageControl({
+          name: 'foo',
+          reset: true,
+          enable: ['bar']
+        })
         return transform
         function transform(tree, file) {
           file.message('Error', tree.children[0], 'foo:bar')
