@@ -1,5 +1,5 @@
-import control from 'unified-message-control'
-import marker from 'mdast-comment-marker'
+import unifiedMessageControl from 'unified-message-control'
+import {commentMarker} from 'mdast-comment-marker'
 
 var test = [
   'html', // Comments are `html` nodes in mdast.
@@ -7,5 +7,7 @@ var test = [
 ]
 
 export default function remarkMessageControl(options) {
-  return control(Object.assign({marker, test}, options))
+  return unifiedMessageControl(
+    Object.assign({marker: commentMarker, test}, options)
+  )
 }
