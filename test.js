@@ -197,9 +197,7 @@ test('remarkMessageControl', (t) => {
   t.throws(
     () => {
       remark()
-        .use(() => {
-          return remarkMessageControl({name: 'foo'})
-        })
+        .use(() => remarkMessageControl({name: 'foo'}))
         .processSync('<!--foo test-->')
     },
     /^1:1-1:16: Unknown keyword `test`: expected `'enable'`, `'disable'`, or `'ignore'`/,
@@ -353,9 +351,7 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        return remarkMessageControl({name: 'foo'})
-      })
+      .use(() => remarkMessageControl({name: 'foo'}))
       .processSync('<!doctype html>\n\n<!--bar baz qux-->')
       .messages.map((d) => String(d)),
     [],
@@ -364,9 +360,7 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        return remarkMessageControl({name: 'foo', known: ['known']})
-      })
+      .use(() => remarkMessageControl({name: 'foo', known: ['known']}))
       .processSync('<!--foo ignore known-->\n\n<!--foo ignore unknown-->')
       .messages.map((d) => String(d)),
     ["3:1-3:26: Unknown rule: cannot ignore `'unknown'`"],
