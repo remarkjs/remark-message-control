@@ -10,7 +10,9 @@ import {commentMarker} from 'mdast-comment-marker'
 
 const test = [
   'html', // Comments are `html` nodes in mdast.
-  'comment' // In MDX, comments have their own node.
+  'comment', // In MDX@1, comments have their own node.
+  'mdxFlowExpression', // In MDX@2, comments exist in bracketed expressions.
+  'mdxTextExpression'
 ]
 
 /**
