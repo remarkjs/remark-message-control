@@ -10,7 +10,7 @@
 [![Backers][backers-badge]][collective]
 [![Chat][chat-badge]][chat]
 
-**[remark][]** plugin to enable, disable, and ignore messages.
+**[remark][]** plugin to enable, disable, and ignore messages with comments.
 
 ## Contents
 
@@ -20,6 +20,7 @@
 *   [Use](#use)
 *   [API](#api)
     *   [`unified().use(remarkMessageControl, options)`](#unifieduseremarkmessagecontrol-options)
+    *   [`Options`](#options)
 *   [Syntax](#syntax)
 *   [Types](#types)
 *   [Compatibility](#compatibility)
@@ -33,14 +34,6 @@
 This package is a [unified][] ([remark][]) plugin that lets authors write
 comments in markdown to show and hide messages.
 
-**unified** is a project that transforms content with abstract syntax trees
-(ASTs).
-**remark** adds support for markdown to unified.
-**mdast** is the markdown AST that remark uses.
-remark plugins can inspect the tree and emit warnings and other messages.
-This is a remark plugin that gives authors the ability to configure those
-messages from markdown.
-
 ## When should I use this?
 
 You can use this package when you’re building a linter such as
@@ -50,8 +43,8 @@ this package.
 
 ## Install
 
-This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
-In Node.js (version 12.20+, 14.14+, or 16.0+), install with [npm][]:
+This package is [ESM only][esm].
+In Node.js (version 16+), install with [npm][]:
 
 ```sh
 npm install remark-message-control
@@ -78,93 +71,91 @@ Say we have the following file `example.md`:
 ```markdown
 <!--foo ignore-->
 
-## Heading
+## Neptune
 ```
 
-And our module `example.js` looks as follows:
+…and a module `example.js`:
 
 ```js
-import {read} from 'to-vfile'
-import {reporter} from 'vfile-reporter'
+/**
+ * @typedef {import('mdast').Root} Root
+ */
+
 import {remark} from 'remark'
 import remarkMessageControl from 'remark-message-control'
+import {read} from 'to-vfile'
+import {reporter} from 'vfile-reporter'
 
-main()
+const file = await remark()
+  .use(function () {
+    /** @param {Root} tree */
+    return function (tree, file) {
+      file.message('Whoops!', {
+        place: tree.children[1]?.position,
+        ruleId: 'thing',
+        source: 'foo'
+      })
+    }
+  })
+  .use(remarkMessageControl, {name: 'foo'})
+  .process(await read('example.md'))
 
-async function main() {
-  const file = await remark()
-    .use(function () {
-      return function (tree, file) {
-        file.message('Whoops!', tree.children[1], 'foo:thing')
-      }
-    })
-    .use(remarkMessageControl, {name: 'foo'})
-    .process(await read('example.md'))
-
-  console.error(reporter(file))
-}
+console.error(reporter(file))
 ```
 
-Now running `node example.js` yields:
+…then running `node example.js` yields:
 
 ```markdown
 example.md: no issues found
 ```
 
+> 👉 **Note**: without `remarkMessageControl`, we’d see:
+>
+> ```txt
+> example.md
+> 3:1-3:11 warning Whoops! thing foo
+>
+> ⚠ 1 warning
+> ```
+
 ## API
 
 This package exports no identifiers.
-The default export is `remarkMessageControl`.
+The default export is [`remarkMessageControl`][api-remark-message-control].
 
 ### `unified().use(remarkMessageControl, options)`
 
-Plugin to enable, disable, and ignore messages.
+Enable, disable, and ignore messages with comments.
 
-##### `options`
+###### Parameters
 
-Configuration (required).
+*   `options` ([`Options`][api-options], **required**)
+    — configuration
 
-###### `options.name`
+###### Returns
 
-Name of markers that can control the message sources (`string`).
+Transform ([`Transformer`][unified-transformer]).
 
-For example, `{name: 'alpha'}` controls `alpha` markers:
+### `Options`
 
-```markdown
-<!--alpha ignore-->
-```
+Configuration (TypeScript type).
 
-###### `options.known`
+###### Fields
 
-List of allowed `ruleId`s (`Array<string>`, optional).
-When given, a warning is shown when someone tries to control an unknown rule.
-
-For example, `{name: 'alpha', known: ['bravo']}` results in a warning if
-`charlie` is configured:
-
-```markdown
-<!--alpha ignore charlie-->
-```
-
-###### `options.reset`
-
-Whether to treat all messages as turned off initially (`boolean`, default:
-`false`).
-
-###### `options.enable`
-
-List of `ruleId`s to initially turn on if `reset: true` (`Array<string>`,
-optional).
-All rules are turned on by default (`reset: false`).
-
-###### `options.disable`
-
-List of `ruleId`s to turn on if `reset: false` (`Array<string>`, optional).
-
-###### `options.sources`
-
-Sources that can be controlled with `name` markers (`string` or
-`Array<string>`, default: `options.name`).
+*   `enable` (`Array<string>`, optional)
+    — list of `ruleId`s to initially turn on;
+    used if `reset` is `true`
+*   `disable` (`Array<string>`, optional)
+    — list of `ruleId`s to initially turn off;
+    used if `reset` is not `true`
+*   `known` (`Array<string>`, optional)
+    — list of allowed `ruleId`s
+*   `name` (`string`, **required**)
+    — name of markers that can control the message sources
+*   `reset` (`boolean`, default: `false`)
+    — whether to treat all messages as turned off initially
+*   `source` (`Array<string>` or `string`, default: `options.name`)
+    — [sources][vfile-message-fields] that can be controlled with markers
 
 <!--Old name of section-->
 
@@ -246,23 +237,25 @@ For example, to turn off certain messages for the next node:
 ## Types
 
 This package is fully typed with [TypeScript][].
-An extra `Options` type is exported which models the interface of the accepted
-options.
+It exports the additional type [`Options`][api-options].
 
 ## Compatibility
 
-Projects maintained by the unified collective are compatible with all maintained
+Projects maintained by the unified collective are compatible with maintained
 versions of Node.js.
-As of now, that is Node.js 12.20+, 14.14+, and 16.0+.
-Our projects sometimes work with older versions, but this is not guaranteed.
+
+When we cut a new major release, we drop support for unmaintained versions of
+Node.
+This means we try to keep the current release line, `remark-message-control@^7`,
+compatible with Node.js 12.
 
 This plugin works with `unified` version 6+ and `remark` version 7+.
 
 ## Security
 
 Use of `remark-message-control` does not involve **[rehype][]** (**[hast][]**)
-or user content so there are no openings for [cross-site scripting (XSS)][xss]
-attacks.
+or user content so there are no openings for [cross-site scripting
+(XSS)][wiki-xss] attacks.
 Messages may be hidden from user content though, causing builds to fail or pass,
 or changing a report.
 
@@ -301,9 +294,9 @@ abide by its terms.
 
 [downloads]: https://www.npmjs.com/package/remark-message-control
 
-[size-badge]: https://img.shields.io/bundlephobia/minzip/remark-message-control.svg
+[size-badge]: https://img.shields.io/bundlejs/size/remark-message-control
 
-[size]: https://bundlephobia.com/result?p=remark-message-control
+[size]: https://bundlejs.com/?q=remark-message-control
 
 [sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
 
@@ -317,30 +310,40 @@ abide by its terms.
 
 [npm]: https://docs.npmjs.com/cli/install
 
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+
 [esmsh]: https://esm.sh
 
 [health]: https://github.com/remarkjs/.github
 
-[contributing]: https://github.com/remarkjs/.github/blob/HEAD/contributing.md
+[contributing]: https://github.com/remarkjs/.github/blob/main/contributing.md
 
-[support]: https://github.com/remarkjs/.github/blob/HEAD/support.md
+[support]: https://github.com/remarkjs/.github/blob/main/support.md
 
-[coc]: https://github.com/remarkjs/.github/blob/HEAD/code-of-conduct.md
+[coc]: https://github.com/remarkjs/.github/blob/main/code-of-conduct.md
 
 [license]: license
 
 [author]: https://wooorm.com
 
-[remark]: https://github.com/remarkjs/remark
-
-[unified]: https://github.com/unifiedjs/unified
-
-[typescript]: https://www.typescriptlang.org
-
-[xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
+[hast]: https://github.com/syntax-tree/hast
 
 [rehype]: https://github.com/rehypejs/rehype
 
-[hast]: https://github.com/syntax-tree/hast
+[remark]: https://github.com/remarkjs/remark
 
 [remark-lint]: https://github.com/remarkjs/remark-lint
+
+[typescript]: https://www.typescriptlang.org
+
+[unified]: https://github.com/unifiedjs/unified
+
+[unified-transformer]: https://github.com/unifiedjs/unified#transformer
+
+[vfile-message-fields]: https://github.com/vfile/vfile-message#fields
+
+[wiki-xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
+
+[api-options]: #options
+
+[api-remark-message-control]: #unifieduseremarkmessagecontrol-options
