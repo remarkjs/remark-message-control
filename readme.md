@@ -53,14 +53,14 @@ npm install remark-message-control
 In Deno with [`esm.sh`][esmsh]:
 
 ```js
-import remarkMessageControl from 'https://esm.sh/remark-message-control@7'
+import remarkMessageControl from 'https://esm.sh/remark-message-control@8'
 ```
 
 In browsers with [`esm.sh`][esmsh]:
 
 ```html
 <script type="module">
-  import remarkMessageControl from 'https://esm.sh/remark-message-control@7?bundle'
+  import remarkMessageControl from 'https://esm.sh/remark-message-control@8?bundle'
 </script>
 ```
 
