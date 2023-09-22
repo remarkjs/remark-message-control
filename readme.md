@@ -93,8 +93,10 @@ main()
 
 async function main() {
   const file = await remark()
-    .use(() => (tree, file) => {
-      file.message('Whoops!', tree.children[1], 'foo:thing')
+    .use(function () {
+      return function (tree, file) {
+        file.message('Whoops!', tree.children[1], 'foo:thing')
+      }
     })
     .use(remarkMessageControl, {name: 'foo'})
     .process(await read('example.md'))
