@@ -3,64 +3,93 @@
  * @typedef {import('unified').Plugin<[], Root>} RemarkPlugin
  */
 
+import assert from 'node:assert/strict'
+import test from 'node:test'
 import {remark} from 'remark'
 import remarkToc from 'remark-toc'
-import test from 'tape'
 import remarkMessageControl from './index.js'
 
 test('remarkMessageControl', async function (t) {
-  t.throws(function () {
-    // @ts-expect-error: check how the runtime handles missing `options`.
-    remark().use(remarkMessageControl).processSync('x')
-  }, /Expected `name` in `options`/)
+  await t.test('should expose the public api', async function () {
+    assert.deepEqual(Object.keys(await import('./index.js')).sort(), [
+      'default'
+    ])
+  })
 
-  t.deepEqual(
-    remark()
+  await t.test('should throw w/o options', async function () {
+    try {
+      // @ts-expect-error: check how the runtime handles missing `options`.
+      await remark().use(remarkMessageControl).process('x')
+      assert.fail()
+    } catch (error) {
+      assert.match(String(error), /Expected `name` in `options`/)
+    }
+  })
+
+  await t.test('should “disable” a message', async function () {
+    const file = await remark()
       .use(
         /** @type {RemarkPlugin} */
         function () {
           return function (tree, file) {
-            file.message('Error', tree.children[1], 'foo:bar')
+            file.message('Error', {
+              place: tree.children[1]?.position,
+              ruleId: 'bar',
+              source: 'foo'
+            })
           }
         }
       )
       .use(remarkMessageControl, {name: 'foo'})
-      .processSync('<!--foo disable bar-->\n\nThis is a paragraph.')
-      .messages.map(String),
-    [],
-    'should “disable” a message'
-  )
+      .process('<!--foo disable bar-->\n\nThis is a paragraph.')
 
-  t.deepEqual(
-    remark()
-      .use(
-        /** @type {RemarkPlugin} */
-        function () {
-          return function (tree, file) {
-            file.message('Error', tree.children[1], 'foo:bar')
+    assert.deepEqual(file.messages.map(String), [])
+  })
+
+  await t.test(
+    'should “disable” all message without `ruleId`s',
+    async function () {
+      const file = await remark()
+        .use(
+          /** @type {RemarkPlugin} */
+          function () {
+            return function (tree, file) {
+              file.message('Error', {
+                place: tree.children[1]?.position,
+                ruleId: 'bar',
+                source: 'foo'
+              })
+            }
           }
-        }
-      )
-      .use(remarkMessageControl, {name: 'foo'})
-      .processSync('<!--foo disable-->\n\nThis is a paragraph.')
-      .messages.map(String),
-    [],
-    'should “disable” all message without `ruleId`s'
+        )
+        .use(remarkMessageControl, {name: 'foo'})
+        .process('<!--foo disable-->\n\nThis is a paragraph.')
+
+      assert.deepEqual(file.messages.map(String), [])
+    }
   )
 
-  t.deepEqual(
-    remark()
+  await t.test('should support `reset`', async function () {
+    const file = await remark()
       .use(
         /** @type {RemarkPlugin} */
         function () {
           return function (tree, file) {
-            file.message('Error', tree.children[0], 'foo:bar')
-            file.message('Error', tree.children[2], 'foo:bar')
+            file.message('Error', {
+              place: tree.children[0]?.position,
+              ruleId: 'bar',
+              source: 'foo'
+            })
+            file.message('Error', {
+              place: tree.children[2]?.position,
+              ruleId: 'bar',
+              source: 'foo'
+            })
           }
         }
       )
       .use(remarkMessageControl, {name: 'foo', reset: true})
-      .processSync(
+      .process(
         [
           'This is a paragraph.',
           '',
@@ -69,41 +98,51 @@ test('remarkMessageControl', async function (t) {
           'This is a paragraph.'
         ].join('\n')
       )
-      .messages.map(String),
-    ['5:1-5:21: Error'],
-    'should support `reset`'
-  )
 
-  t.deepEqual(
-    remark()
+    assert.deepEqual(file.messages.map(String), ['5:1-5:21: Error'])
+  })
+
+  await t.test('should enable with a marker, when `reset`', async function () {
+    const file = await remark()
       .use(
         /** @type {RemarkPlugin} */
         function () {
           return function (tree, file) {
-            file.message('Error', tree.children[1], 'foo:bar')
+            file.message('Error', {
+              place: tree.children[1]?.position,
+              ruleId: 'bar',
+              source: 'foo'
+            })
           }
         }
       )
       .use(remarkMessageControl, {name: 'foo', reset: true})
-      .processSync('<!--foo enable bar-->\n\nThis is a paragraph.')
-      .messages.map(String),
-    ['3:1-3:21: Error'],
-    'should enable with a marker, when `reset`'
-  )
+      .process('<!--foo enable bar-->\n\nThis is a paragraph.')
 
-  t.deepEqual(
-    remark()
+    assert.deepEqual(file.messages.map(String), ['3:1-3:21: Error'])
+  })
+
+  await t.test('should enable a message', async function () {
+    const file = await remark()
       .use(
         /** @type {RemarkPlugin} */
         function () {
           return function (tree, file) {
-            file.message('Error', tree.children[1], 'foo:bar')
-            file.message('Error', tree.children[3], 'foo:bar')
+            file.message('Error', {
+              place: tree.children[1]?.position,
+              ruleId: 'bar',
+              source: 'foo'
+            })
+            file.message('Error', {
+              place: tree.children[3]?.position,
+              ruleId: 'bar',
+              source: 'foo'
+            })
           }
         }
       )
       .use(remarkMessageControl, {name: 'foo'})
-      .processSync(
+      .process(
         [
           '<!--foo disable bar-->',
           '',
@@ -114,52 +153,69 @@ test('remarkMessageControl', async function (t) {
           'This is a paragraph.'
         ].join('\n')
       )
-      .messages.map(String),
-    ['7:1-7:21: Error'],
-    'should enable a message'
+
+    assert.deepEqual(file.messages.map(String), ['7:1-7:21: Error'])
+  })
+
+  await t.test(
+    'should enable all message without `ruleId`s',
+    async function () {
+      const file = await remark()
+        .use(
+          /** @type {RemarkPlugin} */
+          function () {
+            return function (tree, file) {
+              file.message('Error', {
+                place: tree.children[1]?.position,
+                ruleId: 'bar',
+                source: 'foo'
+              })
+              file.message('Error', {
+                place: tree.children[3]?.position,
+                ruleId: 'bar',
+                source: 'foo'
+              })
+            }
+          }
+        )
+        .use(remarkMessageControl, {name: 'foo'})
+        .process(
+          [
+            '<!--foo disable bar-->',
+            '',
+            'This is a paragraph.',
+            '',
+            '<!--foo enable-->',
+            '',
+            'This is a paragraph.'
+          ].join('\n')
+        )
+
+      assert.deepEqual(file.messages.map(String), ['7:1-7:21: Error'])
+    }
   )
 
-  t.deepEqual(
-    remark()
+  await t.test('should ignore a message', async function () {
+    const file = await remark()
       .use(
         /** @type {RemarkPlugin} */
         function () {
           return function (tree, file) {
-            file.message('Error', tree.children[1], 'foo:bar')
-            file.message('Error', tree.children[3], 'foo:bar')
+            file.message('Error', {
+              place: tree.children[1]?.position,
+              ruleId: 'bar',
+              source: 'foo'
+            })
+            file.message('Error', {
+              place: tree.children[2]?.position,
+              ruleId: 'bar',
+              source: 'foo'
+            })
           }
         }
       )
       .use(remarkMessageControl, {name: 'foo'})
-      .processSync(
-        [
-          '<!--foo disable bar-->',
-          '',
-          'This is a paragraph.',
-          '',
-          '<!--foo enable-->',
-          '',
-          'This is a paragraph.'
-        ].join('\n')
-      )
-      .messages.map(String),
-    ['7:1-7:21: Error'],
-    'should enable all message without `ruleId`s'
-  )
-
-  t.deepEqual(
-    remark()
-      .use(
-        /** @type {RemarkPlugin} */
-        function () {
-          return function (tree, file) {
-            file.message('Error', tree.children[1], 'foo:bar')
-            file.message('Error', tree.children[2], 'foo:bar')
-          }
-        }
-      )
-      .use(remarkMessageControl, {name: 'foo'})
-      .processSync(
+      .process(
         [
           '<!--foo ignore bar-->',
           '',
@@ -168,79 +224,108 @@ test('remarkMessageControl', async function (t) {
           'This is a paragraph.'
         ].join('\n')
       )
-      .messages.map(String),
-    ['5:1-5:21: Error'],
-    'should ignore a message'
-  )
 
-  t.deepEqual(
-    remark()
-      .use(
-        /** @type {RemarkPlugin} */
-        function () {
-          return function (tree, file) {
-            file.message('Error', tree.children[1], 'foo:bar')
-            file.message('Error', tree.children[2], 'foo:bar')
+    assert.deepEqual(file.messages.map(String), ['5:1-5:21: Error'])
+  })
+
+  await t.test(
+    'should ignore all message without `ruleId`s',
+    async function () {
+      const file = await remark()
+        .use(
+          /** @type {RemarkPlugin} */
+          function () {
+            return function (tree, file) {
+              file.message('Error', {
+                place: tree.children[1]?.position,
+                ruleId: 'bar',
+                source: 'foo'
+              })
+              file.message('Error', {
+                place: tree.children[2]?.position,
+                ruleId: 'bar',
+                source: 'foo'
+              })
+            }
           }
-        }
-      )
-      .use(remarkMessageControl, {name: 'foo'})
-      .processSync(
-        [
-          '<!--foo ignore-->',
-          '',
-          'This is a paragraph.',
-          '',
-          'This is a paragraph.'
-        ].join('\n')
-      )
-      .messages.map(String),
-    ['5:1-5:21: Error'],
-    'should ignore all message without `ruleId`s'
-  )
-
-  t.deepEqual(
-    remark()
-      .use(
-        /** @type {RemarkPlugin} */
-        function () {
-          return function (tree, file) {
-            file.message('Error', tree.children[1], 'foo:bar')
-            file.message('Error', tree.children[1], 'foo:baz')
-          }
-        }
-      )
-      .use(remarkMessageControl, {name: 'foo'})
-      .processSync('<!--foo ignore bar baz-->\n\nThis is a paragraph.')
-      .messages.map(String),
-    [],
-    'should ignore multiple rules'
-  )
-
-  t.throws(
-    function () {
-      remark()
+        )
         .use(remarkMessageControl, {name: 'foo'})
-        .processSync('<!--foo test-->')
-    },
-    /^1:1-1:16: Unknown keyword `test`: expected `'enable'`, `'disable'`, or `'ignore'`/,
-    'should fail on invalid verbs'
+        .process(
+          [
+            '<!--foo ignore-->',
+            '',
+            'This is a paragraph.',
+            '',
+            'This is a paragraph.'
+          ].join('\n')
+        )
+
+      assert.deepEqual(file.messages.map(String), ['5:1-5:21: Error'])
+    }
   )
 
-  t.deepEqual(
-    remark()
+  await t.test('should ignore multiple rules', async function () {
+    const file = await remark()
+      .use(
+        /** @type {RemarkPlugin} */
+        function () {
+          return function (tree, file) {
+            file.message('Error', {
+              place: tree.children[1]?.position,
+              ruleId: 'bar',
+              source: 'foo'
+            })
+            file.message('Error', {
+              place: tree.children[1]?.position,
+              ruleId: 'baz',
+              source: 'foo'
+            })
+          }
+        }
+      )
+      .use(remarkMessageControl, {name: 'foo'})
+      .process('<!--foo ignore bar baz-->\n\nThis is a paragraph.')
+
+    assert.deepEqual(file.messages.map(String), [])
+  })
+
+  await t.test('should fail on invalid verbs', async function () {
+    try {
+      await remark()
+        .use(remarkMessageControl, {name: 'foo'})
+        .process('<!--foo test-->')
+
+      assert.fail()
+    } catch (error) {
+      assert.match(
+        String(error),
+        /^1:1-1:16: Unknown keyword `test`: expected `'enable'`, `'disable'`, or `'ignore'`/
+      )
+    }
+  })
+
+  await t.test('should ignore gaps', async function () {
+    const file = await remark()
       .use(remarkToc)
       .use(
         /** @type {RemarkPlugin} */
         function () {
-          return function (tree, file) {
-            file.message('Error', {line: 5, column: 1}, 'foo:bar')
-            file.message('Error', {line: 7, column: 1}, 'foo:bar')
+          return function (_, file) {
+            file.message('Error', {
+              place: {line: 5, column: 1},
+              ruleId: 'bar',
+              source: 'foo'
+            })
+            file.message('Error', {
+              place: {line: 7, column: 1},
+              ruleId: 'bar',
+              source: 'foo'
+            })
           }
         }
       )
       .use(remarkMessageControl, {name: 'foo'})
-      .processSync(
+      .process(
         [
           '# README',
           '',
@@ -251,26 +336,33 @@ test('remarkMessageControl', async function (t) {
           '## Another header'
         ].join('\n')
       )
-      .messages.map(String),
-    ['7:1: Error'],
-    'should ignore gaps'
-  )
 
-  t.deepEqual(
-    remark()
+    assert.deepEqual(file.messages.map(String), ['7:1: Error'])
+  })
+
+  await t.test('should ignore final gaps', async function () {
+    const file = await remark()
       .use(
         /** @type {RemarkPlugin} */
         function () {
           return function (tree, file) {
-            file.message('Error', {line: 5, column: 1}, 'foo:bar')
-            file.message('Error', {line: 5, column: 1}, 'foo:bar')
+            file.message('Error', {
+              place: {line: 5, column: 1},
+              ruleId: 'bar',
+              source: 'foo'
+            })
+            file.message('Error', {
+              place: {line: 5, column: 1},
+              ruleId: 'bar',
+              source: 'foo'
+            })
             // Remove list.
             tree.children.pop()
           }
         }
       )
       .use(remarkMessageControl, {name: 'foo'})
-      .processSync(
+      .process(
         [
           '# README',
           '',
@@ -279,79 +371,90 @@ test('remarkMessageControl', async function (t) {
           '*  [This is removed](#this-is-removed)'
         ].join('\n')
       )
-      .messages.map(String),
-    [],
-    'should ignore final gaps'
-  )
 
-  t.deepEqual(
-    remark()
+    assert.deepEqual(file.messages.map(String), [])
+  })
+
+  await t.test('should support empty documents', async function () {
+    const file = await remark()
       .use(
         /** @type {RemarkPlugin} */
         function () {
-          return function (tree, file) {
-            file.message('Error', undefined, 'foo:bar')
+          return function (_, file) {
+            file.message('Error', {
+              ruleId: 'bar',
+              source: 'foo'
+            })
           }
         }
       )
       .use(remarkMessageControl, {name: 'foo'})
-      .processSync('')
-      .messages.map(String),
-    ['1:1: Error'],
-    'should support empty documents'
-  )
+      .process('')
 
-  t.deepEqual(
-    remark()
+    assert.deepEqual(file.messages.map(String), ['1:1: Error'])
+  })
+
+  await t.test('should message at the end of the document', async function () {
+    const file = await remark()
       .use(
         /** @type {RemarkPlugin} */
         function () {
           return function (tree, file) {
-            file.message('Error', tree.position && tree.position.end, 'foo:bar')
+            file.message('Error', {
+              place: tree.position?.end,
+              ruleId: 'bar',
+              source: 'foo'
+            })
           }
         }
       )
       .use(remarkMessageControl, {name: 'foo'})
-      .processSync('# README\n')
-      .messages.map(String),
-    ['2:1: Error'],
-    'should message at the end of the document'
-  )
+      .process('# README\n')
 
-  t.deepEqual(
-    remark()
+    assert.deepEqual(file.messages.map(String), ['2:1: Error'])
+  })
+
+  await t.test('should message at the end of the document', async function () {
+    const file = await remark()
       .use(
         /** @type {RemarkPlugin} */
         function () {
           return function (tree, file) {
-            file.message(
-              'Error',
-              tree.children[1].position && tree.children[1].position.end,
-              'foo:bar'
-            )
+            file.message('Error', {
+              place: tree.children[1]?.position?.end,
+              ruleId: 'bar',
+              source: 'foo'
+            })
           }
         }
       )
       .use(remarkMessageControl, {name: 'foo'})
-      .processSync('# README\n\n*   List')
-      .messages.map(String),
-    ['3:9: Error'],
-    'should message at the end of the document'
-  )
+      .process('# README\n\n*   List')
 
-  t.deepEqual(
-    remark()
+    assert.deepEqual(file.messages.map(String), ['3:9: Error'])
+  })
+
+  await t.test('should ignore double disables', async function () {
+    const file = await remark()
       .use(
         /** @type {RemarkPlugin} */
         function () {
           return function (tree, file) {
-            file.message('Error', tree.children[1], 'foo:bar')
-            file.message('Error', tree.children[3], 'foo:bar')
+            file.message('Error', {
+              place: tree.children[1]?.position,
+              ruleId: 'bar',
+              source: 'foo'
+            })
+            file.message('Error', {
+              place: tree.children[3]?.position,
+              ruleId: 'bar',
+              source: 'foo'
+            })
           }
         }
       )
       .use(remarkMessageControl, {name: 'foo'})
-      .processSync(
+      .process(
         [
           '<!--foo disable bar-->',
           '',
@@ -362,101 +465,125 @@ test('remarkMessageControl', async function (t) {
           'This is a paragraph.'
         ].join('\n')
       )
-      .messages.map(String),
-    [],
-    'should ignore double disables'
+
+    assert.deepEqual(file.messages.map(String), [])
+  })
+
+  await t.test(
+    'should not ignore messages without location information',
+    async function () {
+      const file = await remark()
+        .use(
+          /** @type {RemarkPlugin} */
+          function () {
+            return function (_, file) {
+              file.message('Error', {ruleId: 'bar', source: 'foo'})
+            }
+          }
+        )
+        .use(remarkMessageControl, {name: 'foo'})
+        .process('Foo')
+
+      assert.deepEqual(file.messages.map(String), ['1:1: Error'])
+    }
   )
 
-  t.deepEqual(
-    remark()
-      .use(
-        /** @type {RemarkPlugin} */
-        function () {
-          return function (tree, file) {
-            file.message('Error', undefined, 'foo:bar')
-          }
-        }
-      )
+  await t.test('should ignore non-markers', async function () {
+    const file = await remark()
       .use(remarkMessageControl, {name: 'foo'})
-      .processSync('Foo')
-      .messages.map(String),
-    ['1:1: Error'],
-    'should not ignore messages without location information'
+      .process('<!doctype html>\n\n<!--bar baz qux-->')
+
+    assert.deepEqual(file.messages.map(String), [])
+  })
+
+  await t.test(
+    'should support a list of `known` values, and warn on unknowns',
+    async function () {
+      const file = await remark()
+        .use(remarkMessageControl, {known: ['known'], name: 'foo'})
+        .process('<!--foo ignore known-->\n\n<!--foo ignore unknown-->')
+
+      assert.deepEqual(file.messages.map(String), [
+        "3:1-3:26: Cannot ignore `'unknown'`, it’s not known"
+      ])
+    }
   )
 
-  t.deepEqual(
-    remark()
-      .use(remarkMessageControl, {name: 'foo'})
-      .processSync('<!doctype html>\n\n<!--bar baz qux-->')
-      .messages.map(String),
-    [],
-    'should ignore non-markers'
-  )
-
-  t.deepEqual(
-    remark()
-      .use(remarkMessageControl, {known: ['known'], name: 'foo'})
-      .processSync('<!--foo ignore known-->\n\n<!--foo ignore unknown-->')
-      .messages.map(String),
-    ["3:1-3:26: Cannot ignore `'unknown'`, it’s not known"],
-    'should support a list of `known` values, and warn on unknowns'
-  )
-
-  t.deepEqual(
-    remark()
-      .use(
-        /** @type {RemarkPlugin} */
-        function () {
-          return function (tree, file) {
-            file.message('Error', tree.children[1], 'baz:bar')
+  await t.test(
+    'should ignore by `source`, when given as a string',
+    async function () {
+      const file = await remark()
+        .use(
+          /** @type {RemarkPlugin} */
+          function () {
+            return function (tree, file) {
+              file.message('Error', {
+                place: tree.children[1]?.position,
+                ruleId: 'bar',
+                source: 'baz'
+              })
+            }
           }
-        }
-      )
-      .use(remarkMessageControl, {name: 'foo', source: 'baz'})
-      .processSync('<!--foo ignore bar-->\n\nFoo')
-      .messages.map(String),
-    [],
-    'should ignore by `source`, when given as a string'
+        )
+        .use(remarkMessageControl, {name: 'foo', source: 'baz'})
+        .process('<!--foo ignore bar-->\n\nFoo')
+
+      assert.deepEqual(file.messages.map(String), [])
+    }
   )
 
-  t.deepEqual(
-    remark()
-      .use(
-        /** @type {RemarkPlugin} */
-        function () {
-          return function (tree, file) {
-            file.message('Error', tree.children[1], 'bravo:delta')
-            file.message('Error', tree.children[3], 'charlie:echo')
+  await t.test(
+    'should ignore by `source`, when given as an array',
+    async function () {
+      const file = await remark()
+        .use(
+          /** @type {RemarkPlugin} */
+          function () {
+            return function (tree, file) {
+              file.message('Error', {
+                place: tree.children[1]?.position,
+                ruleId: 'delta',
+                source: 'bravo'
+              })
+              file.message('Error', {
+                place: tree.children[3]?.position,
+                ruleId: 'echo',
+                source: 'charlie'
+              })
+            }
           }
-        }
-      )
-      .use(remarkMessageControl, {
-        name: 'alpha',
-        source: ['bravo', 'charlie']
-      })
-      .processSync(
-        [
-          '<!--alpha ignore delta-->',
-          '',
-          'Foxtrot',
-          '',
-          '<!--alpha ignore echo-->',
-          '',
-          'Golf'
-        ].join('\n')
-      )
-      .messages.map(String),
-    [],
-    'should ignore by `source`, when given as an array'
+        )
+        .use(remarkMessageControl, {
+          name: 'alpha',
+          source: ['bravo', 'charlie']
+        })
+        .process(
+          [
+            '<!--alpha ignore delta-->',
+            '',
+            'Foxtrot',
+            '',
+            '<!--alpha ignore echo-->',
+            '',
+            'Golf'
+          ].join('\n')
+        )
+
+      assert.deepEqual(file.messages.map(String), [])
+    }
   )
 
-  t.deepEqual(
-    remark()
+  await t.test('should support initial `disable`s', async function () {
+    const file = await remark()
       .use(
         /** @type {RemarkPlugin} */
         function () {
           return function (tree, file) {
-            file.message('Error', tree.children[0], 'foo:bar')
+            file.message('Error', {
+              place: tree.children[0]?.position,
+              ruleId: 'bar',
+              source: 'foo'
+            })
           }
         }
       )
@@ -465,19 +592,22 @@ test('remarkMessageControl', async function (t) {
         name: 'foo',
         reset: false
       })
-      .processSync('This is a paragraph.')
-      .messages.map(String),
-    [],
-    'should support initial `disable`s'
-  )
+      .process('This is a paragraph.')
 
-  t.deepEqual(
-    remark()
+    assert.deepEqual(file.messages.map(String), [])
+  })
+
+  await t.test('should support initial `enable`s', async function () {
+    const file = await remark()
       .use(
         /** @type {RemarkPlugin} */
         function () {
           return function (tree, file) {
-            file.message('Error', tree.children[0], 'foo:bar')
+            file.message('Error', {
+              place: tree.children[0]?.position,
+              ruleId: 'bar',
+              source: 'foo'
+            })
           }
         }
       )
@@ -486,11 +616,8 @@ test('remarkMessageControl', async function (t) {
         name: 'foo',
         reset: true
       })
-      .processSync('This is a paragraph.')
-      .messages.map(String),
-    ['1:1-1:21: Error'],
-    'should support initial `enable`s'
-  )
+      .process('This is a paragraph.')
 
-  t.end()
+    assert.deepEqual(file.messages.map(String), ['1:1-1:21: Error'])
+  })
 })
