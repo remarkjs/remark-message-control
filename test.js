@@ -1,25 +1,33 @@
+/**
+ * @typedef {import('mdast').Root} Root
+ * @typedef {import('unified').Plugin<[], Root>} RemarkPlugin
+ */
+
 import test from 'tape'
 import {remark} from 'remark'
 import remarkToc from 'remark-toc'
 import remarkMessageControl from './index.js'
 
-test('remarkMessageControl', (t) => {
+test('remarkMessageControl', async function (t) {
   t.throws(() => {
     // @ts-expect-error: options missing.
-    remark().use(remarkMessageControl).freeze()
-  }, /Expected `name` in `options`, got `undefined`/)
+    remark().use(remarkMessageControl).processSync('x')
+  }, /Expected `name` in `options`/)
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message('Error', tree.children[1], 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */
+        () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message('Error', tree.children[1], 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync('<!--foo disable bar-->\n\nThis is a paragraph.')
       .messages.map(String),
     [],
@@ -28,15 +36,17 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message('Error', tree.children[1], 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message('Error', tree.children[1], 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync('<!--foo disable-->\n\nThis is a paragraph.')
       .messages.map(String),
     [],
@@ -45,16 +55,18 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo', reset: true})
-        return (tree, file) => {
-          file.message('Error', tree.children[0], 'foo:bar')
-          file.message('Error', tree.children[2], 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo', reset: true})
+          return (tree, file) => {
+            file.message('Error', tree.children[0], 'foo:bar')
+            file.message('Error', tree.children[2], 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync(
         [
           'This is a paragraph.',
@@ -71,15 +83,17 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo', reset: true})
-        return (tree, file) => {
-          file.message('Error', tree.children[1], 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo', reset: true})
+          return (tree, file) => {
+            file.message('Error', tree.children[1], 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync('<!--foo enable bar-->\n\nThis is a paragraph.')
       .messages.map(String),
     ['3:1-3:21: Error'],
@@ -88,16 +102,18 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message('Error', tree.children[1], 'foo:bar')
-          file.message('Error', tree.children[3], 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message('Error', tree.children[1], 'foo:bar')
+            file.message('Error', tree.children[3], 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync(
         [
           '<!--foo disable bar-->',
@@ -116,16 +132,18 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message('Error', tree.children[1], 'foo:bar')
-          file.message('Error', tree.children[3], 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message('Error', tree.children[1], 'foo:bar')
+            file.message('Error', tree.children[3], 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync(
         [
           '<!--foo disable bar-->',
@@ -144,16 +162,18 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message('Error', tree.children[1], 'foo:bar')
-          file.message('Error', tree.children[2], 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message('Error', tree.children[1], 'foo:bar')
+            file.message('Error', tree.children[2], 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync(
         [
           '<!--foo ignore bar-->',
@@ -170,16 +190,18 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message('Error', tree.children[1], 'foo:bar')
-          file.message('Error', tree.children[2], 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message('Error', tree.children[1], 'foo:bar')
+            file.message('Error', tree.children[2], 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync(
         [
           '<!--foo ignore-->',
@@ -196,16 +218,18 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message('Error', tree.children[1], 'foo:bar')
-          file.message('Error', tree.children[1], 'foo:baz')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message('Error', tree.children[1], 'foo:bar')
+            file.message('Error', tree.children[1], 'foo:baz')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync('<!--foo ignore bar baz-->\n\nThis is a paragraph.')
       .messages.map(String),
     [],
@@ -215,8 +239,12 @@ test('remarkMessageControl', (t) => {
   t.throws(
     () => {
       remark()
-        // @ts-expect-error: to do: fix types.
-        .use(() => remarkMessageControl({name: 'foo'}))
+        .use(
+          /** @type {RemarkPlugin} */ () => {
+            // @ts-expect-error: to do: fix types.
+            return remarkMessageControl({name: 'foo'})
+          }
+        )
         .processSync('<!--foo test-->')
     },
     /^1:1-1:16: Unknown keyword `test`: expected `'enable'`, `'disable'`, or `'ignore'`/,
@@ -226,16 +254,18 @@ test('remarkMessageControl', (t) => {
   t.deepEqual(
     remark()
       .use(remarkToc)
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message('Error', {line: 5, column: 1}, 'foo:bar')
-          file.message('Error', {line: 7, column: 1}, 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message('Error', {line: 5, column: 1}, 'foo:bar')
+            file.message('Error', {line: 7, column: 1}, 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync(
         [
           '# README',
@@ -254,20 +284,22 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message('Error', {line: 5, column: 1}, 'foo:bar')
-          file.message('Error', {line: 5, column: 1}, 'foo:bar')
-
-          /* Remove list. */
-          tree.children.pop()
-
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message('Error', {line: 5, column: 1}, 'foo:bar')
+            file.message('Error', {line: 5, column: 1}, 'foo:bar')
+
+            /* Remove list. */
+            tree.children.pop()
+
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync(
         [
           '# README',
@@ -284,15 +316,17 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message('Error', undefined, 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message('Error', undefined, 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync('')
       .messages.map(String),
     ['1:1: Error'],
@@ -301,15 +335,17 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message('Error', tree.position && tree.position.end, 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message('Error', tree.position && tree.position.end, 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync('# README\n')
       .messages.map(String),
     ['2:1: Error'],
@@ -318,19 +354,21 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message(
-            'Error',
-            tree.children[1].position && tree.children[1].position.end,
-            'foo:bar'
-          )
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message(
+              'Error',
+              tree.children[1].position && tree.children[1].position.end,
+              'foo:bar'
+            )
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync('# README\n\n*   List')
       .messages.map(String),
     ['3:9: Error'],
@@ -339,16 +377,18 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message('Error', tree.children[1], 'foo:bar')
-          file.message('Error', tree.children[3], 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message('Error', tree.children[1], 'foo:bar')
+            file.message('Error', tree.children[3], 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync(
         [
           '<!--foo disable bar-->',
@@ -367,15 +407,17 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo'})
-        return (tree, file) => {
-          file.message('Error', undefined, 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo'})
+          return (tree, file) => {
+            file.message('Error', undefined, 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync('Foo')
       .messages.map(String),
     ['1:1: Error'],
@@ -384,8 +426,12 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      // @ts-expect-error: to do: fix types.
-      .use(() => remarkMessageControl({name: 'foo'}))
+      .use(
+        /** @type {RemarkPlugin} */ () => {
+          // @ts-expect-error: to do: fix types.
+          return remarkMessageControl({name: 'foo'})
+        }
+      )
       .processSync('<!doctype html>\n\n<!--bar baz qux-->')
       .messages.map(String),
     [],
@@ -394,25 +440,31 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      // @ts-expect-error: to do: fix types.
-      .use(() => remarkMessageControl({name: 'foo', known: ['known']}))
+      .use(
+        /** @type {RemarkPlugin} */ () => {
+          // @ts-expect-error: to do: fix types.
+          return remarkMessageControl({name: 'foo', known: ['known']})
+        }
+      )
       .processSync('<!--foo ignore known-->\n\n<!--foo ignore unknown-->')
       .messages.map(String),
-    ["3:1-3:26: Unknown rule: cannot ignore `'unknown'`"],
+    ["3:1-3:26: Cannot ignore `'unknown'`, it’s not known"],
     'should support a list of `known` values, and warn on unknowns'
   )
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({name: 'foo', source: 'baz'})
-        return (tree, file) => {
-          file.message('Error', tree.children[1], 'baz:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({name: 'foo', source: 'baz'})
+          return (tree, file) => {
+            file.message('Error', tree.children[1], 'baz:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync('<!--foo ignore bar-->\n\nFoo')
       .messages.map(String),
     [],
@@ -421,19 +473,21 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({
-          name: 'alpha',
-          source: ['bravo', 'charlie']
-        })
-        return (tree, file) => {
-          file.message('Error', tree.children[1], 'bravo:delta')
-          file.message('Error', tree.children[3], 'charlie:echo')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({
+            name: 'alpha',
+            source: ['bravo', 'charlie']
+          })
+          return (tree, file) => {
+            file.message('Error', tree.children[1], 'bravo:delta')
+            file.message('Error', tree.children[3], 'charlie:echo')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync(
         [
           '<!--alpha ignore delta-->',
@@ -452,19 +506,21 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({
-          name: 'foo',
-          reset: false,
-          disable: ['bar']
-        })
-        return (tree, file) => {
-          file.message('Error', tree.children[0], 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({
+            name: 'foo',
+            reset: false,
+            disable: ['bar']
+          })
+          return (tree, file) => {
+            file.message('Error', tree.children[0], 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync('This is a paragraph.')
       .messages.map(String),
     [],
@@ -473,19 +529,21 @@ test('remarkMessageControl', (t) => {
 
   t.deepEqual(
     remark()
-      .use(() => {
-        // @ts-expect-error: to do: fix types.
-        const transformer = remarkMessageControl({
-          name: 'foo',
-          reset: true,
-          enable: ['bar']
-        })
-        return (tree, file) => {
-          file.message('Error', tree.children[0], 'foo:bar')
+      .use(
+        /** @type {RemarkPlugin} */ () => {
           // @ts-expect-error: to do: fix types.
-          transformer(tree, file)
+          const transformer = remarkMessageControl({
+            name: 'foo',
+            reset: true,
+            enable: ['bar']
+          })
+          return (tree, file) => {
+            file.message('Error', tree.children[0], 'foo:bar')
+            // @ts-expect-error: to do: fix types.
+            transformer(tree, file)
+          }
         }
-      })
+      )
       .processSync('This is a paragraph.')
       .messages.map(String),
     ['1:1-1:21: Error'],

@@ -2,10 +2,10 @@
  * @typedef {import('mdast').Root} Root
  * @typedef {import('vfile').VFile} VFile
  * @typedef {import('unified-message-control')} MessageControl
- * @typedef {Omit<import('unified-message-control').OptionsWithoutReset, 'marker'>|Omit<import('unified-message-control').OptionsWithReset, 'marker'>} Options
+ * @typedef {Omit<import('unified-message-control').Options, 'file' | 'marker' | 'test'>} Options
  */
 
-import unifiedMessageControl from 'unified-message-control'
+import {messageControl} from 'unified-message-control'
 import {commentMarker} from 'mdast-comment-marker'
 
 const test = [
@@ -22,7 +22,7 @@ const test = [
  * @returns {(node: Root, file: VFile) => void}
  */
 export default function remarkMessageControl(options) {
-  return unifiedMessageControl(
-    Object.assign({marker: commentMarker, test}, options)
-  )
+  return function (tree, file) {
+    messageControl(tree, {marker: commentMarker, file, test, ...options})
+  }
 }
